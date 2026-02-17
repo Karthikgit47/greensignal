@@ -1,24 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/Login";
+import MenuList from "./pages/MenuList";
+import DashboardLayout from "./components/DashboardLayout";
+import BioForm from "./pages/BioForm";
+
 
 function App() {
+  const isLoggedIn = true; // later replace with AuthContext
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+
+        <Route
+          path="/dashboard"
+          element={isLoggedIn ? <DashboardLayout /> : <Navigate to="/login" />}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <Route path="menu" element={<MenuList />} />
+          <Route path="add-form" element={<BioForm />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
