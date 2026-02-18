@@ -1,6 +1,11 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "GreenSignal",
+  "name": "GreenSignal App",
+  "start_url": "/greensignal/",
+  "scope": "/greensignal/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
   "icons": [
     {
       "src": "favicon.ico",
