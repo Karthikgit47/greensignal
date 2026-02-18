@@ -1,4 +1,5 @@
 {
+  "id": "/greensignal/",
   "short_name": "GreenSignal",
   "name": "GreenSignal App",
   "start_url": "/greensignal/",
@@ -22,9 +23,5 @@
       "type": "image/png",
       "sizes": "512x512"
     }
-  ],
-  "start_url": "/greensignal/",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  ]
 }
