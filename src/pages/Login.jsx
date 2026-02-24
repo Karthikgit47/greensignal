@@ -12,30 +12,31 @@ function Login() {
   const [formData, setFormData] = useState({
     usercode: "",
     password: "",
-    subscriptionCode: "b2025-atm01"
+    subscriptionCode: "b2025-atm01",
   });
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    // 
+    //
     try {
       setLoading(true);
 
-      const payload = {Query:{
-        Code: formData.usercode,
-        Password: formData.password,
-        LicenseKey: "b2025-atm01"
-      }};
+      const payload = {
+        Query: {
+          Code: formData.usercode,
+          Password: formData.password,
+          LicenseKey: "b2025-atm01",
+        },
+      };
 
       // const response = await axios.post(
       //   "https://essuat.beyondexs.com/api/ESSLController.php",
@@ -49,36 +50,34 @@ function Login() {
       //   }
       // );
       const response = await axios.post(
-  "https://essuat.beyondexs.com/api/ESSLController.php",
-  {
-    // data: JSON.stringify(payload)
-  },
-  {
-    params: {
-      data: JSON.stringify(payload)
-    },
-    headers: {
-      Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
-    }
-  }
-);
+        "https://essuat.beyondexs.com/api/ESSLController.php",
+        {
+          // data: JSON.stringify(payload)
+        },
+        {
+          params: {
+            data: JSON.stringify(payload),
+          },
+          headers: {
+            Authorization:
+              "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50",
+          },
+        },
+      );
 
       console.log("Login Response:", response.data);
 
       if (response.data.Status !== "Y") {
         throw new Error(response.data.Msg || "Login failed");
       }
-
+      sessionStorage.setItem("EmpData", JSON.stringify(response.data));
       // Store session
       sessionStorage.setItem("username", formData.usercode);
       sessionStorage.setItem("licence", formData.subscriptionCode);
 
       navigate("/dashboard");
-
     } catch (error) {
-      setError(
-        error.response?.data?.Msg || "Something went wrong"
-      );
+      setError(error.response?.data?.Msg || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -88,8 +87,12 @@ function Login() {
     <div style={styles.container}>
       <div style={styles.card}>
         {/* <h2 style={styles.heading}>Welcome Back</h2> */}
-        <div style={styles.logo} >
-          <img src={GreenSignalLogo} alt="Company Logo" style={{ width: "180px", height: "auto" }} />
+        <div style={styles.logo}>
+          <img
+            src={GreenSignalLogo}
+            alt="Company Logo"
+            style={{ width: "180px", height: "auto" }}
+          />
         </div>
 
         <h2 style={styles.subText}>Login </h2>
@@ -148,7 +151,7 @@ const styles = {
     alignItems: "center",
     background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
     fontFamily: "Segoe UI, sans-serif",
-    padding: "20px"
+    padding: "20px",
   },
 
   card: {
@@ -159,18 +162,18 @@ const styles = {
     background: "rgba(255, 255, 255, 0.95)",
     backdropFilter: "blur(10px)",
     boxShadow: "0 20px 40px rgba(0,0,0,0.25)",
-    transition: "0.3s ease-in-out"
+    transition: "0.3s ease-in-out",
   },
 
   logo: {
     textAlign: "center",
-    marginBottom: "25px"
+    marginBottom: "25px",
   },
 
   label: {
     fontWeight: "600",
     color: "#333",
-    marginBottom: "8px"
+    marginBottom: "8px",
   },
 
   subText: {
@@ -179,13 +182,13 @@ const styles = {
     fontWeight: "600",
     fontSize: "25px",
     color: "#2c5364",
-    letterSpacing: "0.5px"
+    letterSpacing: "0.5px",
   },
 
   inputGroup: {
     display: "flex",
     flexDirection: "column",
-    marginBottom: "20px"
+    marginBottom: "20px",
   },
 
   input: {
@@ -196,7 +199,7 @@ const styles = {
     fontSize: "14px",
     outline: "none",
     transition: "all 0.3s ease",
-    boxShadow: "inset 0 1px 3px rgba(0,0,0,0.05)"
+    boxShadow: "inset 0 1px 3px rgba(0,0,0,0.05)",
   },
 
   button: {
@@ -212,13 +215,11 @@ const styles = {
     fontWeight: "600",
     letterSpacing: "0.5px",
     boxShadow: "0 8px 15px rgba(0,0,0,0.2)",
-    transition: "0.3s ease"
-  }
+    transition: "0.3s ease",
+  },
 };
 
 export default Login;
-
-
 
 // import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
