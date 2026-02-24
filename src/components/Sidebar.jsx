@@ -1,8 +1,19 @@
 import { NavLink } from "react-router-dom";
 import GreenSignalLogo from "../images/Greensignal.png";
-
+import { useState } from "react";
 
 function Sidebar({ isOpen }) {
+
+  const [openSOP, setOpenSOP] = useState(false);
+
+  const linkStyle = ({ isActive }) => ({
+    padding: "10px 15px",
+    display: "block",
+    textDecoration: "none",
+    color: "white",
+    background: isActive ? "#334155" : "transparent"
+  });
+
   return (
     <div
       style={{
@@ -22,15 +33,35 @@ function Sidebar({ isOpen }) {
         )}
       </div>
 
-      <NavLink
-        to="/dashboard/menu"
-        style={({ isActive }) => ({
-          ...styles.link,
-          background: isActive ? "#334155" : "transparent"
-        })}
+      <div
+        onClick={() => setOpenSOP(!openSOP)}
+        style={{
+          padding: "10px 15px",
+          cursor: "pointer",
+          color: "white"
+        }}
       >
         📋 {isOpen && "SOP"}
-      </NavLink>
+      </div>
+
+      
+      {openSOP && (
+        <div style={{ paddingLeft: "20px" }}>
+          <NavLink to="/dashboard/list-of-sops" style={linkStyle}>
+            {isOpen && "QC"}
+          </NavLink>
+
+          <NavLink to="/dashboard/menu/qa" style={linkStyle}>
+            {isOpen && "QA"}
+          </NavLink>
+        </div>
+      )}
+
+      {/* <NavLink
+        to="/dashboard/menu"
+        style={({ isActive }) => ({ ...styles.link, background: isActive ? "#334155" : "transparent" })} >
+        📋 {isOpen && "SOP"}
+      </NavLink> */}
 
       <NavLink
         to="/login"

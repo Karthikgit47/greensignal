@@ -1,15 +1,18 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import MenuList from "./pages/MenuList";
 import DashboardLayout from "./components/DashboardLayout";
 import BioForm from "./pages/BioForm";
+import ListOfSOPs from "./pages/ListOfSOPs";
+import SOPDocuments from "./pages/SOPDocuments";
 
+// "homepage": "https://karthikgit47.github.io/greensignal",
 
 function App() {
-  const isLoggedIn = true; // later replace with AuthContext
+  const isLoggedIn = true;
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
 
@@ -18,12 +21,14 @@ function App() {
           element={isLoggedIn ? <DashboardLayout /> : <Navigate to="/login" />}
         >
           <Route path="menu" element={<MenuList />} />
-          <Route path="add-form" element={<BioForm />} />
+          <Route path="add-form/:id" element={<BioForm />} />
+          <Route path="list-of-sops" element={<ListOfSOPs />} />
+          <Route path="sop-documents/:id" element={<SOPDocuments />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
