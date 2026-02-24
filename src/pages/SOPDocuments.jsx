@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaEdit, FaArrowRight } from "react-icons/fa";
+import { FaEdit, FaArrowRight,FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 function SOPDocuments() {
@@ -14,7 +14,9 @@ function SOPDocuments() {
     const handleEdit = (id) => {
         navigate(`/dashboard/add-form/${id}`);
     };
-
+const handleAdd = () => {
+    navigate(`/dashboard/add-form/-1`);
+};
   
 
 
@@ -54,6 +56,26 @@ function SOPDocuments() {
 
     return (
         <div style={{ padding: "20px" }}>
+        {/* Top Header Section */}
+    <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "10px"
+    }}>
+        <h3>List of SOPs</h3>
+
+        <FaPlus
+            title="Add Product"
+            style={{
+                cursor: "pointer",
+                color: "#2563eb",
+                fontSize: "20px"
+            }}
+            onClick={handleAdd}
+        />
+    </div>
+
             <table style={styles.table}>
                 <thead>
                     <tr>
