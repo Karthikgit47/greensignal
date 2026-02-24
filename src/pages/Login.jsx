@@ -31,41 +31,37 @@ function Login() {
     try {
       setLoading(true);
 
-      const payload = {
+      const payload = {Query:{
         Code: formData.usercode,
         Password: formData.password,
         LicenseKey: "b2025-atm01"
-      };
+      }};
 
-      const response = await axios.post(
-        "https://essuat.beyondexs.com/api/ESSLController.php",
-        {
-          params: {
-            data: JSON.stringify(payload)
-          },
-          headers: {
-            Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
-          }
-        }
-      );
       // const response = await axios.post(
       //   "https://essuat.beyondexs.com/api/ESSLController.php",
-      //   // new URLSearchParams({
-      //   //   data: JSON.stringify({
-      //   //     Code: formData.usercode,
-      //   //     Password: formData.password,
-      //   //     LicenseKey: "b2025-atm01"
-      //   //   })
-      //   // }),
       //   {
       //     params: {
       //       data: JSON.stringify(payload)
       //     },
       //     headers: {
-      //       Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk5ODQzNDl9.uxE3r3X4lqV_WKrRKRPXd-Jub9BnVcCXqCtLL4I0fpU"
+      //       Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
       //     }
       //   }
       // );
+      const response = await axios.post(
+  "https://essuat.beyondexs.com/api/ESSLController.php",
+  {
+    // data: JSON.stringify(payload)
+  },
+  {
+    params: {
+      data: JSON.stringify(payload)
+    },
+    headers: {
+      Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
+    }
+  }
+);
 
       console.log("Login Response:", response.data);
 
