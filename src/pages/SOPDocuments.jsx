@@ -8,6 +8,8 @@ import { FaE } from "react-icons/fa6";
 function SOPDocuments() {
   const [data, setData] = useState([]);
   const { id } = useParams();
+  const [loading, setLoading] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -48,6 +50,7 @@ function SOPDocuments() {
   }, []);
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         // const storedUser = sessionStorage.getItem("username");
         const storedUser = sessionStorage.getItem("EmpData");
@@ -148,6 +151,8 @@ function SOPDocuments() {
         setData(response.data?.Data?.rows || []);
       } catch (error) {
         console.error(error.response || error);
+      } finally {
+        setLoading(false); // stop loading
       }
     };
 
@@ -155,7 +160,8 @@ function SOPDocuments() {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "4px" }}>
+      <style>{spinnerKeyframes}</style>
       {/* Top Header Section */}
       <div
         style={{
@@ -167,7 +173,7 @@ function SOPDocuments() {
       >
         <h3>List of SOPs</h3>
 
-        <FaPlus
+        {/* <FaPlus
           title="Add Product"
           style={{
             cursor: "pointer",
@@ -175,9 +181,9 @@ function SOPDocuments() {
             fontSize: "20px",
           }}
           onClick={handleAdd}
-        />
+        /> */}
       </div>
-
+      
       <table style={styles.table}>
         <thead>
           <tr>
@@ -255,84 +261,107 @@ function SOPDocuments() {
               </td>
             </tr>
           )} */}
-          {data && data.length > 0 ? (
-  data.map((item, index) => {
+           {loading ? (
+            <tr>
+              <td colSpan="4" style={{ ...styles.td, textAlign: "center" }}>
+                <div style={spinnerStyle}></div>
+              </td>
+            </tr>
+          ) :
+           data.length > 0 ? (
+            data.map((item, index) => {
+              const canEdit =
+                (PrepareBy === "Y" && item.BatchStatus === "Yet to be Picked") ||
+                (ReviewBY === "Y" && item.BatchStatus === "Prepared") ||
+                (ApprovedBy === "Y" && item.BatchStatus === "Reviewed");
 
-    const canEdit =
-      (PrepareBy === "Y" && item.BatchStatus === "Yet to be Picked") ||
-      (ReviewBY === "Y" && item.BatchStatus === "Prepared") ||
-      (ApprovedBy === "Y" && item.BatchStatus === "Reviewed");
+              const canPrint = item.BatchStatus === "Approved";
 
-    const canPrint = item.BatchStatus === "Approved";
+              return (
+                <tr key={item.RecordID || index}>
+                  <td style={styles.td}>{item.SLNO}</td>
+                  <td style={styles.td}>{item.BatchNo}</td>
+                  <td style={styles.td}>{item.NameoftheProduct}</td>
+                  <td style={styles.td}>{item.ManufacturingDate}</td>
+                  <td style={styles.td}>{item.ExpiryDate}</td>
+                  <td style={styles.td}>{item.BatchStatus}</td>
 
-    return (
-      <tr key={item.RecordID || index}>
-        <td style={styles.td}>{item.SLNO}</td>
-        <td style={styles.td}>{item.BatchNo}</td>
-        <td style={styles.td}>{item.NameoftheProduct}</td>
-        <td style={styles.td}>{item.ManufacturingDate}</td>
-        <td style={styles.td}>{item.ExpiryDate}</td>
-        <td style={styles.td}>{item.BatchStatus}</td>
+                  <td style={{ ...styles.td, textAlign: "center" }}>
 
-        <td style={{ ...styles.td, textAlign: "center" }}>
-          
-          {/* ✅ EDIT */}
-          <FaEdit
-            title="Edit"
-            style={{
-              cursor: canEdit ? "pointer" : "not-allowed",
-              color: canEdit ? "#3468d8" : "#ccc",
-              fontSize: "18px",
-              marginRight: "12px",
-              pointerEvents: canEdit ? "auto" : "none"
-            }}
-            onClick={
-              canEdit
-                ? () => handleEdit(item.RecordID, item.BatchStatus)
-                : undefined
-            }
-          />
+                    {/* ✅ EDIT */}
+                    <FaEdit
+                      title="Edit"
+                      style={{
+                        cursor: canEdit ? "pointer" : "not-allowed",
+                        color: canEdit ? "#3468d8" : "#ccc",
+                        fontSize: "18px",
+                        marginRight: "12px",
+                        pointerEvents: canEdit ? "auto" : "none"
+                      }}
+                      onClick={
+                        canEdit
+                          ? () => handleEdit(item.RecordID, item.BatchStatus)
+                          : undefined
+                      }
+                    />
 
-          {/* ✅ PRINT */}
-          <FaPrint
-            title="Print"
-            style={{
-              // cursor: canPrint ? "pointer" : "not-allowed",
-              // color: canPrint ? "#142a58" : "#ccc",
-               cursor:  "pointer" ,
-              color: "#142a58" ,
-              fontSize: "18px",
-              //opacity: canPrint ? 1 : 0.5,
-              //pointerEvents: canPrint ? "auto" : "none"
-               opacity: 1 ,
-              pointerEvents: "auto" 
-            }}
-            // onClick={
-            //   canPrint
-            //     ? () => handlePrint(item.RecordID)
-            //     : undefined
-            // }
-            onClick={
-               () => handlePrint(item.RecordID)
-            }
-          />
+                    {/* ✅ PRINT */}
+                    <FaPrint
+                      title="Print"
+                      style={{
+                        // cursor: canPrint ? "pointer" : "not-allowed",
+                        // color: canPrint ? "#142a58" : "#ccc",
+                        cursor: "pointer",
+                        color: "#142a58",
+                        fontSize: "18px",
+                        //opacity: canPrint ? 1 : 0.5,
+                        //pointerEvents: canPrint ? "auto" : "none"
+                        opacity: 1,
+                        pointerEvents: "auto"
+                      }}
+                      // onClick={
+                      //   canPrint
+                      //     ? () => handlePrint(item.RecordID)
+                      //     : undefined
+                      // }
+                      onClick={
+                        () => handlePrint(item.RecordID)
+                      }
+                    />
 
-        </td>
-      </tr>
-    );
-  })
-) : (
-  <tr>
-    <td colSpan="7" style={{ ...styles.td, textAlign: "center" }}>
-      No Data Found
-    </td>
-  </tr>
-)}
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan="7" style={{ ...styles.td, textAlign: "center" }}>
+                No Data Found
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
   );
 }
+
+const spinnerStyle = {
+  border: "4px solid #f3f3f3",
+  borderTop: "4px solid #254da8",
+  borderRadius: "50%",
+  width: "30px",
+  height: "30px",
+  animation: "spin 1s linear infinite",
+  margin: "auto",
+};
+
+const spinnerKeyframes = `
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+`;
 
 const styles = {
   topBar: {

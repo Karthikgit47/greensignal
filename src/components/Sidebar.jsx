@@ -6,6 +6,9 @@ function Sidebar({ isOpen }) {
 
   const [openSOP, setOpenSOP] = useState(false);
 
+  const storedUser = sessionStorage.getItem("EmpData");
+  const parsedUser = JSON.parse(storedUser);
+
   const linkStyle = ({ isActive }) => ({
     padding: "10px 15px",
     display: "block",
@@ -32,19 +35,29 @@ function Sidebar({ isOpen }) {
           "GS"
         )}
       </div>
+      <hr style={{border:"1px solid #3c4249"}}></hr>
+      <div style={{ flexGrow: 1 }}>
+        <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700" }}>
+          {parsedUser?.Data?.EMP_NAME || "Guest User"}
+        </h4>
+        {/* <small style={{ fontSize: "12px", opacity: 0.8 }}>
+          {parsedUser?.Data?.EMP_CODE || ""}
+        </small> */}
+      </div><hr style={{border:"1px solid #3c4249"}}></hr>
 
       <div
         onClick={() => setOpenSOP(!openSOP)}
         style={{
           padding: "10px 15px",
           cursor: "pointer",
-          color: "white"
+          color: "white",
+          marginTop: "10px "
         }}
       >
         📋 {isOpen && "SOP"}
       </div>
 
-      
+
       {openSOP && (
         <div style={{ paddingLeft: "20px" }}>
           <NavLink to="/dashboard/list-of-sops" style={linkStyle}>

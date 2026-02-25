@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 function ListOfSOPs() {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -14,6 +16,7 @@ function ListOfSOPs() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const storedUser = sessionStorage.getItem("EmpData");
         // console.log(storedUser.Data)
@@ -50,58 +53,100 @@ function ListOfSOPs() {
       } catch (error) {
         console.error(error.response || error);
       }
+      finally {
+        setLoading(false); // stop loading
+      }
     };
 
     fetchData();
   }, []);
 
   return (
-    <table style={styles.table}>
-      <thead>
-        <tr>
-          <th style={styles.th}>#</th>
-          <th style={styles.th}>Code</th>
-          <th style={styles.th}>Description</th>
-          <th style={styles.th}>Action </th>
-        </tr>
-      </thead>
+    <div>
+      <style>{spinnerKeyframes}</style>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "10px",
+        }}
+      >
+        <h3>List of SOPs</h3>
+      </div>
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>#</th>
+            <th style={styles.th}>Code</th>
+            <th style={styles.th}>Description</th>
+            <th style={styles.th}>Action </th>
+          </tr>
+        </thead>
 
-      <tbody>
-        {data && data.length > 0 ? (
-          data.map((item, index) => (
-            <tr key={item.RecordID || index}>
-              <td style={styles.td}>{item.SLNO}</td>
-              <td style={{ ...styles.td, width: "120px" }}>{item.Code}</td>
-              <td style={styles.td}>{item.Description}</td>
-              <td style={{ ...styles.td, textAlign: "center" }}>
-                <FaArrowRight
-                  style={{
-                    cursor: item.IsEnable === "Y" ? "pointer" : "not-allowed",
-                    color: item.IsEnable === "Y" ? "#254da8" : "#ccc",
-                    fontSize: "18px",
-                    opacity: item.IsEnable === "Y" ? 1 : 0.5,
-                  }}
-                  onClick={() => {
-                    if (item.IsEnable === "Y") {
-                      handleView(item.RecordID);
-                    }
-                  }}
-                />
+
+        <tbody>
+          {loading ? (
+            <tr>
+              <td colSpan="4" style={{ ...styles.td, textAlign: "center" }}>
+                <div style={spinnerStyle}></div>
               </td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="4" style={{ ...styles.td, textAlign: "center" }}>
-              No Data Found
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+          ) : data.length > 0 ? (
+
+            data.map((item, index) => (
+              <tr key={item.RecordID || index}>
+                <td style={styles.td}>{item.SLNO}</td>
+                <td style={{ ...styles.td, width: "120px" }}>{item.Code}</td>
+                <td style={styles.td}>{item.Description}</td>
+                <td style={{ ...styles.td, textAlign: "center" }}>
+                  <FaArrowRight
+                    style={{
+                      cursor: item.IsEnable === "Y" ? "pointer" : "not-allowed",
+                      color: item.IsEnable === "Y" ? "#254da8" : "#ccc",
+                      fontSize: "18px",
+                      opacity: item.IsEnable === "Y" ? 1 : 0.5,
+                    }}
+                    onClick={() => {
+                      if (item.IsEnable === "Y") {
+                        handleView(item.RecordID);
+                      }
+                    }}
+                  />
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4" style={{ ...styles.td, textAlign: "center" }}>
+                No Data Found
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
+const spinnerStyle = {
+  border: "4px solid #f3f3f3",
+  borderTop: "4px solid #254da8",
+  borderRadius: "50%",
+  width: "30px",
+  height: "30px",
+  animation: "spin 1s linear infinite",
+  margin: "auto",
+};
+
+const spinnerKeyframes = `
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+`;
+
+// Add this in a <style> tag somewhere in your component or global CSS
 const styles = {
   topBar: {
     display: "flex",

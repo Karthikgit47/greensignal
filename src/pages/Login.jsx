@@ -27,8 +27,10 @@ function Login() {
 
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: "",  
+      [name]: "",
     }));
+
+    setErrorData("");
   };
 
   // Validation function
@@ -86,7 +88,8 @@ function Login() {
         console.log("Login Response:", response.data);
 
         if (response.data.Status !== "Y") {
-          throw new Error(response.data.Msg || "Login failed");
+          setErrorData(response.data.Msg || "Invalid login credentials");
+          return;
         }
         sessionStorage.setItem("EmpData", JSON.stringify(response.data));
         // Store session
@@ -148,9 +151,9 @@ function Login() {
               onChange={handleChange}
               style={styles.input}
             />
-            {errors.password && (
+            {(errors.password || errorData) && (
               <span style={{ color: "#e94949", fontSize: "15px" }}>
-                {errors.password}
+                {errors.password || errorData}  
               </span>
             )}
           </div>
