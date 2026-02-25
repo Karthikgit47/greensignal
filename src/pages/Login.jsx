@@ -7,7 +7,27 @@ function Login() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [errorData, setErrorData] = useState("");
+
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  const validate = () => {
+    let newErrors = {};
+
+    if (!formData.usercode.trim()) {
+      newErrors.usercode = "User Code is required";
+    }
+
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+    }
+
+    setErrors((prev) => ({
+      ...prev,
+      ...newErrors
+    }));
+  };
 
   const [formData, setFormData] = useState({
     usercode: "",
@@ -25,43 +45,35 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setErrorData("");
 
     // 
     try {
       setLoading(true);
 
-      const payload = {Query:{
-        Code: formData.usercode,
-        Password: formData.password,
-        LicenseKey: "b2025-atm01"
-      }};
+      const payload = {
+        Query: {
+          Code: formData.usercode,
+          Password: formData.password,
+          LicenseKey: "b2025-atm01"
+        }
+      };
 
-      // const response = await axios.post(
-      //   "https://essuat.beyondexs.com/api/ESSLController.php",
-      //   {
-      //     params: {
-      //       data: JSON.stringify(payload)
-      //     },
-      //     headers: {
-      //       Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
-      //     }
-      //   }
-      // );
+      
       const response = await axios.post(
-  "https://essuat.beyondexs.com/api/ESSLController.php",
-  {
-    // data: JSON.stringify(payload)
-  },
-  {
-    params: {
-      data: JSON.stringify(payload)
-    },
-    headers: {
-      Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
-    }
-  }
-);
+        "https://essuat.beyondexs.com/api/ESSLController.php",
+        {
+          // data: JSON.stringify(payload)
+        },
+        {
+          params: {
+            data: JSON.stringify(payload)
+          },
+          headers: {
+            Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
+          }
+        }
+      );
 
       console.log("Login Response:", response.data);
 
@@ -76,13 +88,15 @@ function Login() {
       navigate("/dashboard");
 
     } catch (error) {
-      setError(
+      setErrorData(
         error.response?.data?.Msg || "Something went wrong"
       );
     } finally {
       setLoading(false);
     }
   };
+
+
 
   return (
     <div style={styles.container}>
@@ -104,7 +118,9 @@ function Login() {
               value={formData.usercode}
               onChange={handleChange}
               style={styles.input}
+
             />
+           
           </div>
 
           <div style={styles.inputGroup}>
@@ -117,6 +133,32 @@ function Login() {
               onChange={handleChange}
               style={styles.input}
             />
+          </div>
+
+          <div style={styles.optionsRow}>
+            <div style={styles.rememberMe}>
+              <input
+                type="checkbox"
+                name="rememberMe"
+                // // checked={formData.rememberMe || false}
+                // // onChange={(e) =>
+                // //   setFormData({
+                // //     ...formData,
+                // //     rememberMe: e.target.checked
+                // //   })
+                // }
+                style={styles.checkbox}
+              />
+              <label style={styles.rememberLabel}>Remember Me</label>
+            </div>
+
+            <div>
+              <span
+                style={styles.forgotPassword}
+              >
+                Forgot Password?
+              </span>
+            </div>
           </div>
 
           {/* <div style={styles.inputGroup}>
@@ -213,6 +255,35 @@ const styles = {
     letterSpacing: "0.5px",
     boxShadow: "0 8px 15px rgba(0,0,0,0.2)",
     transition: "0.3s ease"
+  },
+  optionsRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px"
+  },
+
+  rememberMe: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px"
+  },
+
+  checkbox: {
+    cursor: "pointer"
+  },
+
+  rememberLabel: {
+    fontSize: "14px",
+    color: "#555",
+    cursor: "pointer"
+  },
+
+  forgotPassword: {
+    fontSize: "14px",
+    color: "#2e7d32",
+    cursor: "pointer",
+    textDecoration: "underline"
   }
 };
 

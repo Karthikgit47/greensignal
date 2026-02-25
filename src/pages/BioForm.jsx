@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FormikProductautocomplete } from "../components/Autocomplete";
 
@@ -10,6 +10,11 @@ function AddForm() {
   const [data, setData] = useState({});
   const { id, mode } = useParams();
   const [isAccepted, setIsAccepted] = useState(false);
+
+  const location = useLocation();
+  const { batchStatus } = location.state || {};
+
+  console.log("BatchStatus received:", batchStatus);
 
   // const [searchParams] = useSearchParams();
 
@@ -65,6 +70,7 @@ function AddForm() {
     ReviewedDate: "",
     ApprovdBy: "",
     ApprovdDate: "",
+    ReviewComments:"",
   });
   useEffect(() => {
     const A = Number(formData.NumberofVials || 0);
@@ -224,6 +230,9 @@ function AddForm() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+
+  
+
   const styles = {
     wrapper: {
       padding: isMobile ? "8px" : "30px",
@@ -284,6 +293,12 @@ function AddForm() {
     center: {
       textAlign: "center",
     },
+    inputtext: {
+      textAlign: "left",
+      border: "none",
+      outline: "none",
+    },
+
   };
 
   const [manufactureDate, setManufactureDate] = useState("");
@@ -298,9 +313,9 @@ function AddForm() {
     console.log("Fetching and User:", storedUser);
     let Recid = 121;
 
-    let preparedById = selectedpreparedBy || formData.PreparedBy; 
-    let reviewedById = selectedreviewedBy || formData.ReviewedBy; 
-    let approvedById = selectedapprovedBy || formData.ApprovdBy; 
+    let preparedById = selectedpreparedBy || formData.PreparedBy;
+    let reviewedById = selectedreviewedBy || formData.ReviewedBy;
+    let approvedById = selectedapprovedBy || formData.ApprovdBy;
     let batchStatus = formData.BatchStatus;
     let reviewedDate = formData.ReviewedDate;
     let approvedDate = formData.ApprovdDate;
@@ -320,17 +335,17 @@ function AddForm() {
       if (storedUser == "Kabilan") {
         preparedById = 121;
         batchStatus = "Ready";
-        preparedDate=today;
+        preparedDate = today;
       }
       if (storedUser == "Nk") {
         reviewedById = 1;
         batchStatus = "Reviewed";
-         reviewedDate=today;
+        reviewedDate = today;
       }
       if (storedUser == "Cal") {
         approvedById = 129;
         batchStatus = "Approved";
-         approvedDate=today;
+        approvedDate = today;
 
       }
     }
@@ -442,6 +457,7 @@ function AddForm() {
           PreparedDate: preparedDate,
           ReviewedDate: reviewedDate,
           ApprovdDate: approvedDate,
+          ReviewComments: formData.ReviewComments || "",
         },
       };
 
@@ -485,7 +501,7 @@ function AddForm() {
 
               <td style={{ ...styles.cell, width: "30%" }}>
                 <input
-                  style={styles.input}
+                  style={styles.inputtext}
                   type="text"
                   name="NameoftheProduct"
                   value={formData.NameoftheProduct || ""}
@@ -536,7 +552,7 @@ function AddForm() {
                 <br />
                 <input
                   type="text"
-                  style={styles.input}
+                  style={styles.inputtext}
                   name="BatchNo"
                   value={formData.BatchNo || ""}
                   onChange={handleChange}
@@ -552,7 +568,7 @@ function AddForm() {
 
               <td style={styles.cell}>
                 <input
-                  style={styles.input}
+                  style={styles.inputtext}
                   type="date"
                   name="ManufacturingDate"
                   value={formData.ManufacturingDate || ""}
@@ -574,7 +590,7 @@ function AddForm() {
                 <b>Expiry Date</b>
                 <br />
                 <input
-                  style={styles.input}
+                  style={styles.inputtext}
                   type="date"
                   name="ExpiryDate"
                   value={formData.ExpiryDate || ""}
@@ -966,6 +982,8 @@ function AddForm() {
           </tbody>
         </table>
 
+      
+
         {mode === "edit" && (
           <div style={{ marginTop: "20px" }}>
             <label style={{ cursor: "pointer" }}>
@@ -980,8 +998,62 @@ function AddForm() {
             </label>
           </div>)}
 
-        {/* Approval Section */}
 
+            {isAccepted && batchStatus === "Prepared" && (
+          <div
+            style={{
+              marginTop: "30px",
+              borderRadius: "10px",
+              maxWidth: "600px",
+              width: "100%",      // Ensure container uses full width
+            }}
+          >
+            <label style={{ fontWeight: "bold", color: "#003366" }}>Comments</label>
+            <textarea
+              type="text"
+              name="ReviewComments"
+              placeholder="Enter your comments"
+              value={formData.ReviewComments || ""}
+              onChange={handleChange}
+              style={{ ...styles.textarea, width: "100%", marginTop: '20px', height: "100px" }}
+            />
+
+          </div>
+        )}
+
+        {/* {batchStatus === "Prepared" && (
+          <div
+            style={{
+              marginTop: "30px",
+              borderRadius: "10px",
+              maxWidth: "600px"
+            }}
+          >
+            <label style={{ fontWeight: "bold", color: "#003366" }}>Comments</label>
+            <textarea type="text" style={{ ...styles.textarea, width: "100%", marginTop: '20px', height: "100px" }}></textarea>
+          </div>)} */}
+
+        {/* Approval Section */}
+        {isAccepted && batchStatus === "Reviewed" && (
+          <div
+            style={{
+              marginTop: "30px",
+              padding: "20px",
+              border: "2px solid #9cb0c5",
+              borderRadius: "10px",
+              backgroundColor: "#E6F0FF",
+              maxWidth: "600px"
+            }}
+          >
+            <h2 style={{ marginBottom: "15px", color: "#003366" }}>
+              Approve Check List
+            </h2>
+            <ul style={{ paddingLeft: "25px", fontSize: "18px", fontWeight: "500", lineHeight: "2" }}>
+              <li>Number verified</li>
+              <li>Form Checked</li>
+              <li>Datas are in order</li>
+            </ul>
+          </div>)}
 
         {mode === "print" && (
           <table style={{ ...styles.table, marginTop: "25px" }}>
@@ -1004,16 +1076,16 @@ function AddForm() {
                 <td style={{ ...styles.cell, fontWeight: "bold" }}>Name</td>
 
                 <td style={styles.cell}>
-                  {/* <input
-                  type="text"
-                  name="PreparedName"
-                  value={formData.PreparedName || ""}
-                  onChange={handleChange}
-                  style={styles.input}
-                /> */}
-                  <FormikProductautocomplete
+                  <input
+                    type="text"
+                    name="PreparedName"
+                    value={formData.PreparedName || ""}
+                    onChange={handleChange}
+                    style={styles.inputtext}
+                  />
+                  {/* <FormikProductautocomplete
                     // label="Prepared By"
-                    options={preparedBy} // ✅ pass state here
+                    options={preparedBy} // pass state here
                     value={formData.PreparedBy}
                     disabled={
                       formData.BatchStatus === "Reviewed" ||
@@ -1032,18 +1104,18 @@ function AddForm() {
                         PreparedBy: value,
                       }));
                     }}
-                  />
+                  /> */}
                 </td>
 
                 <td style={styles.cell}>
-                  {/* <input
-                  type="text"
-                  name="ReviewedBy"
-                  value={formData.ReviewedBy || ""}
-                  onChange={handleChange}
-                  style={styles.input}
-                /> */}
-                  <FormikProductautocomplete
+                  <input
+                    type="text"
+                    name="ReviewedBy"
+                    value={formData.ReviewedBy || ""}
+                    onChange={handleChange}
+                    style={styles.inputtext}
+                  />
+                  {/* <FormikProductautocomplete
                     // label="Prepared By"
                     options={reviewedBy} // ✅ pass state here
                     value={formData.ReviewedBy}
@@ -1062,18 +1134,18 @@ function AddForm() {
                         ReviewedBy: value,
                       }));
                     }}
-                  />
+                  /> */}
                 </td>
 
                 <td style={styles.cell}>
-                  {/* <input
-                  type="text"
-                  name="ApprovdBy"
-                  value={formData.ApprovdBy || ""}
-                  onChange={handleChange}
-                  style={styles.input}
-                /> */}
-                  <FormikProductautocomplete
+                  <input
+                    type="text"
+                    name="ApprovdBy"
+                    value={formData.ApprovdBy || ""}
+                    onChange={handleChange}
+                    style={styles.inputtext}
+                  />
+                  {/* <FormikProductautocomplete
                     // label="Prepared By"
                     options={approvedBy} // ✅ pass state here
                     value={formData.ApprovdBy}
@@ -1093,7 +1165,7 @@ function AddForm() {
                         ApprovdBy: value,
                       }));
                     }}
-                  />
+                  /> */}
                 </td>
               </tr>
 
@@ -1141,7 +1213,7 @@ function AddForm() {
 
         {/* {isAccepted && ( */}
         <div style={{ marginTop: "20px", textAlign: "right" }}>
-          {isAccepted && (
+          {isAccepted && batchStatus !== "Approved" && (
             <button
               // onClick={handleSave("P")}
               onClick={() => handleSave("P")}
@@ -1158,6 +1230,8 @@ function AddForm() {
             >
               Save & Submit
             </button>)}
+
+          { isAccepted && batchStatus !== "Approved" && (
           <button
             // onClick={handleSave("S")}
             onClick={() => handleSave("S")}
@@ -1169,11 +1243,11 @@ function AddForm() {
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
-              marginRight: "12px"   // 👈 Add this
+              marginRight: "12px"
             }}
           >
-            Save
-          </button>
+            Query
+          </button>)}
 
           <button
             //onClick={handleSave}

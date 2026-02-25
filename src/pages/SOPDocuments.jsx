@@ -12,8 +12,10 @@ function SOPDocuments() {
 
     const navigate = useNavigate();
 
-    const handleEdit = (id) => {
-        navigate(`/dashboard/add-form/${id}/edit`);
+    const handleEdit = (id, batchStatus) => {
+        navigate(`/dashboard/add-form/${id}/edit`, {
+             state: { batchStatus: batchStatus } 
+        })
     };
 
     const handlePrint = (id) => {
@@ -139,7 +141,7 @@ function SOPDocuments() {
                                             fontSize: "18px",
                                             marginRight: "12px"
                                         }}
-                                        onClick={() => handleEdit(item.RecordID)}
+                                        onClick={() => handleEdit(item.RecordID, item.BatchStatus)}
                                     />
                                     <FaPrint
                                         title="Print"
