@@ -12,23 +12,6 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  const validate = () => {
-    let newErrors = {};
-
-    if (!formData.usercode.trim()) {
-      newErrors.usercode = "User Code is required";
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = "Password is required";
-    }
-
-    setErrors((prev) => ({
-      ...prev,
-      ...newErrors
-    }));
-  };
-
   const [formData, setFormData] = useState({
     usercode: "",
     password: "",
@@ -36,17 +19,38 @@ function Login() {
   });
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+  };
+
+  // Validation function
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formData.usercode.trim()) {
+      newErrors.usercode = "User code is required";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } 
+
+    return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorData("");
+    // setErrorData("");
+
+    const validationErrors = validate();
+    setErrors(validationErrors);
 
     //
+     if (Object.keys(validationErrors).length === 0) {
+      console.log("Form submitted", formData);
     try {
       setLoading(true);
 
@@ -92,6 +96,7 @@ function Login() {
     } finally {
       setLoading(false);
     }
+  }
   };
 
 
@@ -121,8 +126,11 @@ function Login() {
               onChange={handleChange}
               style={styles.input}
 
-            />
-           
+            /> {errors.usercode && (
+              <span style={{ color: "#e94949", fontSize: "15px" }}>
+                {errors.usercode}
+              </span>
+            )}
           </div>
 
           <div style={styles.inputGroup}>

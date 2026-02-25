@@ -509,6 +509,7 @@ function AddForm() {
                   name="NameoftheProduct"
                   value={formData.NameoftheProduct || ""}
                   onChange={handleChange}
+                  readOnly={mode === "print"}
                 />
               </td>
 
@@ -521,12 +522,15 @@ function AddForm() {
                   name="IP"
                   value="Y"
                   checked={formData.IP === "Y"}
-                  onChange={(e) =>
+                  
+                  onChange={(e) =>{
+                     if (mode !== "print") {
                     setFormData((prev) => ({
                       ...prev,
                       IP: e.target.checked ? "Y" : "N",
                     }))
-                  }
+                   }
+                  }}
                 />
               </td>
 
@@ -538,12 +542,15 @@ function AddForm() {
                   type="checkbox"
                   name="BP"
                   value="Y"
+                  readOnly={mode === "print"}
                   checked={formData.BP === "Y"}
-                  onChange={(e) =>
+                  onChange={(e) =>{
+                     if (mode !== "print") {
                     setFormData((prev) => ({
                       ...prev,
                       BP: e.target.checked ? "Y" : "N",
                     }))
+                     }}
                   }
                 />
               </td>
@@ -558,6 +565,7 @@ function AddForm() {
                   name="BatchNo"
                   value={formData.BatchNo || ""}
                   onChange={handleChange}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -583,6 +591,7 @@ function AddForm() {
                       ExpiryDate: "",
                     }));
                   }}
+                  readOnly={mode === "print"}
                 />
               </td>
 
@@ -603,6 +612,7 @@ function AddForm() {
                       ExpiryDate: e.target.value,
                     }))
                   }
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -635,6 +645,7 @@ function AddForm() {
                   name="NumberofVials"
                   value={formData.NumberofVials || ""}
                   onChange={handleChange}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -649,6 +660,7 @@ function AddForm() {
                   value={formData.VialWashingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
+                   readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -663,6 +675,7 @@ function AddForm() {
                   value={formData.DepyrogenationTunnelRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
+                   readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -681,6 +694,7 @@ function AddForm() {
                   }
                   onChange={handleChange}
                   style={styles.input}
+                   readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -695,6 +709,7 @@ function AddForm() {
                   value={formData.FillingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -709,6 +724,7 @@ function AddForm() {
                   value={formData.RowbyRowRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -723,6 +739,7 @@ function AddForm() {
                   value={formData.LyophilizerUnloadingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -737,6 +754,7 @@ function AddForm() {
                   value={formData.CappingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -751,6 +769,7 @@ function AddForm() {
                   value={formData.VisualInspectionRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -765,6 +784,7 @@ function AddForm() {
                   value={formData.QCFinishedProductSampling || ""}
                   onChange={handleChange}
                   style={styles.input}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -779,6 +799,7 @@ function AddForm() {
                   value={formData.LabellingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -812,6 +833,7 @@ function AddForm() {
                   value={formData.CDLaddGMSDSamples || ""}
                   onChange={handleChange}
                   style={styles.input}
+                   readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -826,6 +848,7 @@ function AddForm() {
                   value={formData.RetentionSamples || ""}
                   onChange={handleChange}
                   style={styles.input}
+                   readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -840,6 +863,7 @@ function AddForm() {
                   value={formData.OtherSamples || ""}
                   onChange={handleChange}
                   style={styles.input}
+                   readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -910,6 +934,7 @@ function AddForm() {
                   name="VVMRejection"
                   value={formData.VVMRejection || ""}
                   onChange={handleChange}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -927,6 +952,7 @@ function AddForm() {
                   value={formData.TotalNumberofVialsafterVVMActivity || ""}
                   onChange={handleChange}
                   style={styles.input}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -942,6 +968,7 @@ function AddForm() {
                   value={formData.PackingRejection ?? ""}
                   onChange={handleChange}
                   style={styles.input}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -1124,6 +1151,7 @@ function AddForm() {
                     value={formData.PreparedName || ""}
                     onChange={handleChange}
                     style={styles.inputtext}
+                    readOnly={mode === "print"}
                   />
                   {/* <FormikProductautocomplete
                     // label="Prepared By"
@@ -1156,6 +1184,7 @@ function AddForm() {
                     value={formData.ReviewedBy || ""}
                     onChange={handleChange}
                     style={styles.inputtext}
+                    readOnly={mode === "print"}
                   />
                   {/* <FormikProductautocomplete
                     // label="Prepared By"
@@ -1186,6 +1215,7 @@ function AddForm() {
                     value={formData.ApprovdBy || ""}
                     onChange={handleChange}
                     style={styles.inputtext}
+                    readOnly={mode === "print"}
                   />
                   {/* <FormikProductautocomplete
                     // label="Prepared By"
