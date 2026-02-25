@@ -70,7 +70,8 @@ function AddForm() {
     ReviewedDate: "",
     ApprovdBy: "",
     ApprovdDate: "",
-    ReviewComments:"",
+    ReviewComments: "",
+    ApprovedComments: "",
   });
   useEffect(() => {
     const A = Number(formData.NumberofVials || 0);
@@ -130,7 +131,6 @@ function AddForm() {
     formData.VVMRejection,
     formData.PackingRejection,
   ]);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -230,9 +230,6 @@ function AddForm() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-  
-
   const styles = {
     wrapper: {
       padding: isMobile ? "8px" : "30px",
@@ -298,7 +295,6 @@ function AddForm() {
       border: "none",
       outline: "none",
     },
-
   };
 
   const [manufactureDate, setManufactureDate] = useState("");
@@ -309,9 +305,21 @@ function AddForm() {
     console.log(selectedpreparedBy, "selectedpreparedBy");
     console.log(action, "action");
     const today = new Date().toISOString().split("T")[0];
-    const storedUser = sessionStorage.getItem("username");
-    console.log("Fetching and User:", storedUser);
-    let Recid = 121;
+    const now = new Date();
+    const formatted = now.toISOString().slice(0, 19).replace("T", " ");
+    console.log(formatted);
+    // const storedUser = sessionStorage.getItem("username");
+    // console.log("Fetching and User:", storedUser);
+    const storedEMp = sessionStorage.getItem("EmpData");
+    // console.log(storedUser.Data)
+    const parsedUser = JSON.parse(storedEMp);
+    const PrepareBy = parsedUser.Data.EMP_PREPAREDBY;
+    const ReviewBY = parsedUser.Data.EMP_REVIEWBY;
+    const ApprovedBy = parsedUser.Data.EMP_APPROVEDBY;
+    const UserID = parsedUser.Data.EMP_RECID;
+    console.log(parsedUser); // full object
+    console.log(parsedUser.Data); // Data object
+    console.log(parsedUser.Data.EMP_RECID); // specific value
 
     let preparedById = selectedpreparedBy || formData.PreparedBy;
     let reviewedById = selectedreviewedBy || formData.ReviewedBy;
@@ -321,32 +329,30 @@ function AddForm() {
     let approvedDate = formData.ApprovdDate;
     let preparedDate = formData.PreparedDate;
 
-    if (storedUser == "Kabilan") {
-      preparedById = 121;
+    if (formData.BatchStatus == "Yet to be Prepared") {
+      preparedById = UserID;
     }
-    if (storedUser == "Nk") {
-      reviewedById = 1;
+    if (formData.BatchStatus == "Preapred") {
+      reviewedById = UserID;
     }
-    if (storedUser == "Cal") {
-      approvedById = 129;
-
+    if (formData.BatchStatus == "Reviewed") {
+      approvedById = UserID;
     }
     if (action == "P") {
-      if (storedUser == "Kabilan") {
-        preparedById = 121;
-        batchStatus = "Ready";
-        preparedDate = today;
+      if (formData.BatchStatus == "Yet to be Prepared") {
+        preparedById = UserID;
+        batchStatus = "Preapred";
+        preparedDate = formatted;
       }
-      if (storedUser == "Nk") {
-        reviewedById = 1;
+      if (formData.BatchStatus == "Preapred") {
+        reviewedById = UserID;
         batchStatus = "Reviewed";
-        reviewedDate = today;
+        reviewedDate = formatted;
       }
-      if (storedUser == "Cal") {
-        approvedById = 129;
+      if (formData.BatchStatus == "Reviewed") {
+        approvedById = UserID;
         batchStatus = "Approved";
-        approvedDate = today;
-
+        approvedDate = formatted;
       }
     }
     // let reviewedDate = null;
@@ -373,8 +379,6 @@ function AddForm() {
     // ) {
     //   approvedDate = today;
     // }
-
-
 
     // Prepared
     // if (
@@ -458,6 +462,7 @@ function AddForm() {
           ReviewedDate: reviewedDate,
           ApprovdDate: approvedDate,
           ReviewComments: formData.ReviewComments || "",
+          ApprovedComments: formData.ApprovedComments || "",
         },
       };
 
@@ -484,8 +489,6 @@ function AddForm() {
     }
   };
 
-
-
   return (
     <div style={styles.wrapper}>
       <div style={styles.container}>
@@ -506,7 +509,6 @@ function AddForm() {
                   name="NameoftheProduct"
                   value={formData.NameoftheProduct || ""}
                   onChange={handleChange}
-
                 />
               </td>
 
@@ -982,8 +984,6 @@ function AddForm() {
           </tbody>
         </table>
 
-      
-
         {mode === "edit" && (
           <div style={{ marginTop: "20px" }}>
             <label style={{ cursor: "pointer" }}>
@@ -996,28 +996,62 @@ function AddForm() {
               {/* I agree to the Terms & Conditions */}
               The above entered details are correct and have been verified.
             </label>
-          </div>)}
+          </div>
+        )}
 
-
-            {isAccepted && batchStatus === "Prepared" && (
+        {isAccepted && batchStatus === "Prepared" && (
           <div
             style={{
               marginTop: "30px",
               borderRadius: "10px",
               maxWidth: "600px",
-              width: "100%",      // Ensure container uses full width
+              width: "100%", // Ensure container uses full width
             }}
           >
-            <label style={{ fontWeight: "bold", color: "#003366" }}>Comments</label>
+            <label style={{ fontWeight: "bold", color: "#003366" }}>
+              Comments
+            </label>
             <textarea
               type="text"
               name="ReviewComments"
               placeholder="Enter your comments"
               value={formData.ReviewComments || ""}
               onChange={handleChange}
-              style={{ ...styles.textarea, width: "100%", marginTop: '20px', height: "100px" }}
+              style={{
+                ...styles.textarea,
+                width: "100%",
+                marginTop: "20px",
+                height: "100px",
+              }}
             />
+          </div>
+        )}
 
+        {isAccepted && batchStatus === "Revieved" && (
+          <div
+            style={{
+              marginTop: "30px",
+              borderRadius: "10px",
+              maxWidth: "600px",
+              width: "100%", // Ensure container uses full width
+            }}
+          >
+            <label style={{ fontWeight: "bold", color: "#003366" }}>
+              Comments
+            </label>
+            <textarea
+              type="text"
+              name="ApprovedComments"
+              placeholder="Enter your comments"
+              value={formData.ApprovedComments || ""}
+              onChange={handleChange}
+              style={{
+                ...styles.textarea,
+                width: "100%",
+                marginTop: "20px",
+                height: "100px",
+              }}
+            />
           </div>
         )}
 
@@ -1042,18 +1076,26 @@ function AddForm() {
               border: "2px solid #9cb0c5",
               borderRadius: "10px",
               backgroundColor: "#E6F0FF",
-              maxWidth: "600px"
+              maxWidth: "600px",
             }}
           >
             <h2 style={{ marginBottom: "15px", color: "#003366" }}>
               Approve Check List
             </h2>
-            <ul style={{ paddingLeft: "25px", fontSize: "18px", fontWeight: "500", lineHeight: "2" }}>
+            <ul
+              style={{
+                paddingLeft: "25px",
+                fontSize: "18px",
+                fontWeight: "500",
+                lineHeight: "2",
+              }}
+            >
               <li>Number verified</li>
               <li>Form Checked</li>
               <li>Datas are in order</li>
             </ul>
-          </div>)}
+          </div>
+        )}
 
         {mode === "print" && (
           <table style={{ ...styles.table, marginTop: "25px" }}>
@@ -1209,7 +1251,8 @@ function AddForm() {
                 </td>
               </tr>
             </tbody>
-          </table>)}
+          </table>
+        )}
 
         {/* {isAccepted && ( */}
         <div style={{ marginTop: "20px", textAlign: "right" }}>
@@ -1225,29 +1268,31 @@ function AddForm() {
                 border: "none",
                 borderRadius: "5px",
                 cursor: "pointer",
-                marginRight: "12px"
+                marginRight: "12px",
               }}
             >
               Save & Submit
-            </button>)}
+            </button>
+          )}
 
-          { isAccepted && batchStatus !== "Approved" && (
-          <button
-            // onClick={handleSave("S")}
-            onClick={() => handleSave("S")}
-            style={{
-              padding: "10px 20px",
-              fontSize: "16px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              marginRight: "12px"
-            }}
-          >
-            Query
-          </button>)}
+          {batchStatus != "Approved" && mode === "edit" &&(
+            <button
+              // onClick={handleSave("S")}
+              onClick={() => handleSave("S")}
+              style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                backgroundColor: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                marginRight: "12px",
+              }}
+            >
+              {formData.BatchStatus == "Yet to be Picked" ? "Save" : "Query"}
+            </button>
+          )}
 
           <button
             //onClick={handleSave}
@@ -1264,7 +1309,6 @@ function AddForm() {
           >
             Cancel
           </button>
-
         </div>
         {/* // )} */}
       </div>
