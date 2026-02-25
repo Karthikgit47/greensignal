@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaEdit, FaArrowRight,FaPlus } from "react-icons/fa";
+import { FaEdit, FaArrowRight, FaPrint, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { FaE } from "react-icons/fa6";
 
 function SOPDocuments() {
 
@@ -12,22 +13,49 @@ function SOPDocuments() {
     const navigate = useNavigate();
 
     const handleEdit = (id) => {
-        navigate(`/dashboard/add-form/${id}`);
+        navigate(`/dashboard/add-form/${id}/edit`);
     };
-const handleAdd = () => {
-    navigate(`/dashboard/add-form/-1`);
-};
-  
+
+    const handlePrint = (id) => {
+        navigate(`/dashboard/add-form/${id}/print`);
+    };
+    const handleAdd = () => {
+        navigate(`/dashboard/add-form/-1`);
+    };
+
+    const [username, setUsername] = useState("");
+
+    useEffect(() => {
+        const storedUser = sessionStorage.getItem("username");
+        console.log("Fetching and User:", storedUser);
+        if (storedUser) {
+            setUsername(storedUser);
+        }
+    }, []);
+
 
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const storedUser = sessionStorage.getItem("username");
+                console.log("Fetching and User:", storedUser);
+                let Filter = "CompanyID=76";
+                if (storedUser == "Kabilan") {
+                    Filter += " AND BatchStatus='Prepared'";
+                }
+                if (storedUser == "Nk") {
+                    Filter += " AND BatchStatus='Ready'";
+                }
+                if (storedUser == "Cal") {
+                    Filter += " AND BatchStatus IN ('Reviewed', 'Approved')";
+
+                }
                 const payload = {
                     Query: {
                         AccessID: "TR335",
                         ScreenName: "SOPDocuments",
-                        Filter: "CompanyID=76",
+                        Filter: Filter,
                         Any: ""
                     }
                 };
@@ -56,34 +84,35 @@ const handleAdd = () => {
 
     return (
         <div style={{ padding: "20px" }}>
-        {/* Top Header Section */}
-    <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "10px"
-    }}>
-        <h3>List of SOPs</h3>
+            {/* Top Header Section */}
+            <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "10px"
+            }}>
+                <h3>List of SOPs</h3>
 
-        <FaPlus
-            title="Add Product"
-            style={{
-                cursor: "pointer",
-                color: "#2563eb",
-                fontSize: "20px"
-            }}
-            onClick={handleAdd}
-        />
-    </div>
+                <FaPlus
+                    title="Add Product"
+                    style={{
+                        cursor: "pointer",
+                        color: "#2563eb",
+                        fontSize: "20px"
+                    }}
+                    onClick={handleAdd}
+                />
+            </div>
 
             <table style={styles.table}>
                 <thead>
                     <tr>
-                        <th style={styles.th}>S.No</th>
-                        <th style={styles.th}>BatchNo</th>
+                        <th style={styles.th}>#</th>
+                        <th style={styles.th}>Batch No</th>
                         <th style={styles.th}>Name of the Product</th>
                         <th style={styles.th}>Manufacturing Date</th>
                         <th style={styles.th}>Expiry Date</th>
+                        <th style={styles.th}>Status</th>
                         <th style={styles.th}>Action</th>
 
                     </tr>
@@ -98,18 +127,35 @@ const handleAdd = () => {
                                 <td style={styles.td}>{item.NameoftheProduct}</td>
                                 <td style={styles.td}>{item.ManufacturingDate}</td>
                                 <td style={styles.td}>{item.ExpiryDate}</td>
+                                <td style={styles.td}>{item.BatchStatus}</td>
                                 <td style={{ ...styles.td, textAlign: "center" }}>
-                                    {/* Edit Icon */}
                                     <FaEdit
                                         title="Edit"
                                         style={{
-                                            cursor: "pointer",
-                                            color: "#16a34a",
+                                             cursor: item.BatchStatus === "Approved" ? "not-allowed" : "pointer",
+                                              color: item.BatchStatus !== "Approved" ? "#3561c0" : "#ccc",
+                                            // cursor: "pointer",
+                                            // color: "#3468d8",
                                             fontSize: "18px",
                                             marginRight: "12px"
                                         }}
                                         onClick={() => handleEdit(item.RecordID)}
                                     />
+                                    <FaPrint
+                                        title="Print"
+                                        style={{
+                                            cursor: item.BatchStatus === "Approved" ? "pointer" : "not-allowed",
+                                            color: item.BatchStatus === "Approved" ? "#142a58" : "#ccc",
+                                            fontSize: "18px",
+                                            opacity: item.BatchStatus === "Approved" ? 1 : 0.5
+                                        }}
+                                        onClick={() => {
+                                            if (item.BatchStatus === "Approved") {
+                                                handlePrint(item.RecordID);
+                                            }
+                                        }}
+                                    />
+
 
                                 </td>
                             </tr>

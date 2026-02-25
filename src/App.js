@@ -21,7 +21,7 @@ function App() {
           element={isLoggedIn ? <DashboardLayout /> : <Navigate to="/login" />}
         >
           <Route path="menu" element={<MenuList />} />
-          <Route path="add-form/:id" element={<BioForm />} />
+          <Route path="add-form/:id/:mode" element={<BioForm />} />
           <Route path="list-of-sops" element={<ListOfSOPs />} />
           <Route path="sop-documents/:id" element={<SOPDocuments />} />
         </Route>

@@ -53,7 +53,7 @@ function ListOfSOPs() {
         <table style={styles.table}>
             <thead>
                 <tr>
-                    <th style={styles.th}>S.No</th>
+                    <th style={styles.th}>#</th>
                     <th style={styles.th}>Code</th>
                     <th style={styles.th}>Description</th>
                     <th style={styles.th}>Action </th>
@@ -65,7 +65,7 @@ function ListOfSOPs() {
                     data.map((item, index) => (
                         <tr key={item.RecordID || index}>
                             <td style={styles.td}>{item.SLNO}</td>
-                            <td style={styles.td}>{item.Code}</td>
+                            <td style={{ ...styles.td, width: "120px" }}>{item.Code}</td>
                             <td style={styles.td}>{item.Description}</td>
                             <td style={{ ...styles.td, textAlign: "center" }}>
                                 <FaArrowRight

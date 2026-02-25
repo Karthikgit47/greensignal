@@ -16,15 +16,19 @@ function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    // if (formData.email && formData.password) {
-      navigate("/dashboard");
-    // } else {
-    //   alert("Enter email & password");
-    // }
-  };
+  if (formData.username) {
+
+    // Store username in sessionStorage
+    sessionStorage.setItem("username", formData.username);
+
+    navigate("/dashboard");
+  } else {
+    alert("Enter username & password");
+  }
+};
 
   return (
     <div style={styles.container}>
@@ -34,12 +38,12 @@ function Login() {
 
         <form onSubmit={handleSubmit}>
           <div style={styles.inputGroup}>
-            <label>Email</label>
+            <label>Username</label>
             <input
-              type="email"
-              name="email"
-              placeholder="Enter email"
-              value={formData.email}
+              type="text"
+              name="username"
+              placeholder="Enter username"
+              value={formData.username}
               onChange={handleChange}
               style={styles.input}
             />

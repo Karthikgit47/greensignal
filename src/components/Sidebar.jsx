@@ -48,12 +48,12 @@ function Sidebar({ isOpen }) {
       {openSOP && (
         <div style={{ paddingLeft: "20px" }}>
           <NavLink to="/dashboard/list-of-sops" style={linkStyle}>
-            {isOpen && "QC"}
-          </NavLink>
-
-          <NavLink to="/dashboard/menu/qa" style={linkStyle}>
             {isOpen && "QA"}
           </NavLink>
+
+          {/* <NavLink to="/dashboard/menu/qa" style={linkStyle}>
+            {isOpen && "QA"}
+          </NavLink> */}
         </div>
       )}
 

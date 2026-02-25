@@ -8,7 +8,12 @@ import { FormikProductautocomplete } from "../components/Autocomplete";
 function AddForm() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [data, setData] = useState({});
-  const { id } = useParams();
+  const { id, mode } = useParams();
+  const [isAccepted, setIsAccepted] = useState(false);
+
+  // const [searchParams] = useSearchParams();
+
+  //  const mode = searchParams.get("mode") || "edit";
   const navigate = useNavigate();
   const [preparedBy, setpreparedBy] = useState([]);
   const [selectedpreparedBy, setselectedpreparedBy] = useState(null);
@@ -119,6 +124,8 @@ function AddForm() {
     formData.VVMRejection,
     formData.PackingRejection,
   ]);
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -258,6 +265,7 @@ function AddForm() {
       outline: "none",
       fontFamily: "Times New Roman, serif",
       fontSize: isMobile ? "11px" : "14px",
+      textAlign: "right",
       //  textAlign: "right",
     },
     numberinput: {
@@ -281,11 +289,51 @@ function AddForm() {
   const [manufactureDate, setManufactureDate] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
 
-  const handleSave = async () => {
+  const handleSave = async (action) => {
     console.log(formData);
     console.log(selectedpreparedBy, "selectedpreparedBy");
+    console.log(action, "action");
     const today = new Date().toISOString().split("T")[0];
+    const storedUser = sessionStorage.getItem("username");
+    console.log("Fetching and User:", storedUser);
+    let Recid = 121;
 
+    let preparedById = selectedpreparedBy || formData.PreparedBy; 
+    let reviewedById = selectedreviewedBy || formData.ReviewedBy; 
+    let approvedById = selectedapprovedBy || formData.ApprovdBy; 
+    let batchStatus = formData.BatchStatus;
+    let reviewedDate = formData.ReviewedDate;
+    let approvedDate = formData.ApprovdDate;
+    let preparedDate = formData.PreparedDate;
+
+    if (storedUser == "Kabilan") {
+      preparedById = 121;
+    }
+    if (storedUser == "Nk") {
+      reviewedById = 1;
+    }
+    if (storedUser == "Cal") {
+      approvedById = 129;
+
+    }
+    if (action == "P") {
+      if (storedUser == "Kabilan") {
+        preparedById = 121;
+        batchStatus = "Ready";
+        preparedDate=today;
+      }
+      if (storedUser == "Nk") {
+        reviewedById = 1;
+        batchStatus = "Reviewed";
+         reviewedDate=today;
+      }
+      if (storedUser == "Cal") {
+        approvedById = 129;
+        batchStatus = "Approved";
+         approvedDate=today;
+
+      }
+    }
     // let reviewedDate = null;
     // let approvedDate = null;
     // let preparedDate = null;
@@ -310,45 +358,35 @@ function AddForm() {
     // ) {
     //   approvedDate = today;
     // }
-    let batchStatus = "Prepared";
 
-if (selectedapprovedBy) {
-  batchStatus = "Approved";
-} else if (selectedreviewedBy) {
-  batchStatus = "Reviewed";
-} else if (selectedpreparedBy) {
-  batchStatus = "Prepared";
-}
-    let preparedDate = null;
-let reviewedDate = null;
-let approvedDate = null;
 
-// Prepared
-if (
-  (!formData.PreparedDate || formData.PreparedDate === "") &&
-  batchStatus === "Prepared" &&
-  selectedpreparedBy
-) {
-  preparedDate = today;
-}
 
-// Reviewed
-if (
-  (!formData.ReviewedDate || formData.ReviewedDate === "") &&
-  batchStatus=== "Reviewed" &&
-  selectedreviewedBy
-) {
-  reviewedDate = today;
-}
+    // Prepared
+    // if (
+    //   (!formData.PreparedDate || formData.PreparedDate === "") &&
+    //   batchStatus === "Prepared" &&
+    //   selectedpreparedBy
+    // ) {
+    //   preparedDate = today;
+    // }
 
-// Approved
-if (
-  (!formData.ApprovdDate || formData.ApprovdDate === "") &&
-  batchStatus === "Approved" &&
-  selectedapprovedBy
-) {
-  approvedDate = today;
-}
+    // // Reviewed
+    // if (
+    //   (!formData.ReviewedDate || formData.ReviewedDate === "") &&
+    //   batchStatus === "Reviewed" &&
+    //   selectedreviewedBy
+    // ) {
+    //   reviewedDate = today;
+    // }
+
+    // // Approved
+    // if (
+    //   (!formData.ApprovdDate || formData.ApprovdDate === "") &&
+    //   batchStatus === "Approved" &&
+    //   selectedapprovedBy
+    // ) {
+    //   approvedDate = today;
+    // }
 
     // return;
     try {
@@ -398,15 +436,17 @@ if (
           BatchStatus: batchStatus,
           RowbyRowRejection: Number(formData.RowbyRowRejection) || 0,
           SOPID: 1,
-          PreparedBy: Number(selectedpreparedBy) || 0,
-          ReviewedBy: Number(selectedreviewedBy) || 0,
-          ApprovdBy: Number(selectedapprovedBy) || 0,
+          PreparedBy: preparedById || 0,
+          ReviewedBy: reviewedById || 0,
+          ApprovdBy: approvedById || 0,
           PreparedDate: preparedDate,
-          ReviewedDate:  reviewedDate,
+          ReviewedDate: reviewedDate,
           ApprovdDate: approvedDate,
         },
       };
 
+      console.log("Payload for Save:", payload);
+      // return;
       const response = await axios.post(
         "https://bosuat.beyondexs.com/api/APIController.php",
         payload,
@@ -428,6 +468,8 @@ if (
     }
   };
 
+
+
   return (
     <div style={styles.wrapper}>
       <div style={styles.container}>
@@ -448,6 +490,7 @@ if (
                   name="NameoftheProduct"
                   value={formData.NameoftheProduct || ""}
                   onChange={handleChange}
+
                 />
               </td>
 
@@ -552,7 +595,7 @@ if (
         <table style={{ ...styles.table, marginTop: "20px" }}>
           <thead>
             <tr>
-              <th style={{ ...styles.header, width: "8%" }}>S. No</th>
+              <th style={{ ...styles.header, width: "8%" }}>#</th>
               <th style={{ ...styles.header, width: "72%" }}>Description</th>
               <th style={{ ...styles.header, width: "20%" }}>
                 Number of Vials
@@ -923,166 +966,201 @@ if (
           </tbody>
         </table>
 
+        {mode === "edit" && (
+          <div style={{ marginTop: "20px" }}>
+            <label style={{ cursor: "pointer" }}>
+              <input
+                type="checkbox"
+                checked={isAccepted}
+                onChange={(e) => setIsAccepted(e.target.checked)}
+                style={{ marginRight: "8px" }}
+              />
+              {/* I agree to the Terms & Conditions */}
+              The above entered details are correct and have been verified.
+            </label>
+          </div>)}
+
         {/* Approval Section */}
-        <table style={{ ...styles.table, marginTop: "25px" }}>
-          <thead>
-            <tr>
-              <th style={{ ...styles.header, width: "25%" }}>Description</th>
-              <th style={{ ...styles.header, width: "25%" }}>Prepared By</th>
-              <th style={{ ...styles.header, width: "25%" }}>
-                Reviewed By (PD)
-              </th>
-              <th style={{ ...styles.header, width: "25%" }}>
-                Approved By (QA)
-              </th>
-            </tr>
-          </thead>
 
-          <tbody>
-            {/* Name Row */}
-            <tr>
-              <td style={{ ...styles.cell, fontWeight: "bold" }}>Name</td>
 
-              <td style={styles.cell}>
-                {/* <input
+        {mode === "print" && (
+          <table style={{ ...styles.table, marginTop: "25px" }}>
+            <thead>
+              <tr>
+                <th style={{ ...styles.header, width: "25%" }}>Description</th>
+                <th style={{ ...styles.header, width: "25%" }}>Prepared By</th>
+                <th style={{ ...styles.header, width: "25%" }}>
+                  Reviewed By (PD)
+                </th>
+                <th style={{ ...styles.header, width: "25%" }}>
+                  Approved By (QA)
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {/* Name Row */}
+              <tr>
+                <td style={{ ...styles.cell, fontWeight: "bold" }}>Name</td>
+
+                <td style={styles.cell}>
+                  {/* <input
                   type="text"
                   name="PreparedName"
                   value={formData.PreparedName || ""}
                   onChange={handleChange}
                   style={styles.input}
                 /> */}
-                <FormikProductautocomplete
-                  // label="Prepared By"
-                  options={preparedBy} // ✅ pass state here
-                  value={formData.PreparedBy}
-                  disabled={
-                    formData.BatchStatus === "Reviewed" ||
-                    formData.BatchStatus === "Approved"
-                  }
-                  //disabled={(formData.BatchStatus==""||formData.BatchStatus=="Prepared")==true?true:false}
-                  onChange={(value) => {
-                    console.log("Selected RecordID:", value);
-                    if (value) {
-                      setselectedpreparedBy(value);
-                    } else {
-                      setselectedpreparedBy(null);
+                  <FormikProductautocomplete
+                    // label="Prepared By"
+                    options={preparedBy} // ✅ pass state here
+                    value={formData.PreparedBy}
+                    disabled={
+                      formData.BatchStatus === "Reviewed" ||
+                      formData.BatchStatus === "Approved"
                     }
-                    setFormData((prev) => ({
-                      ...prev,
-                      PreparedBy: value,
-                    }));
-                  }}
-                />
-              </td>
+                    //disabled={(formData.BatchStatus==""||formData.BatchStatus=="Prepared")==true?true:false}
+                    onChange={(value) => {
+                      console.log("Selected RecordID:", value);
+                      if (value) {
+                        setselectedpreparedBy(value);
+                      } else {
+                        setselectedpreparedBy(null);
+                      }
+                      setFormData((prev) => ({
+                        ...prev,
+                        PreparedBy: value,
+                      }));
+                    }}
+                  />
+                </td>
 
-              <td style={styles.cell}>
-                {/* <input
+                <td style={styles.cell}>
+                  {/* <input
                   type="text"
                   name="ReviewedBy"
                   value={formData.ReviewedBy || ""}
                   onChange={handleChange}
                   style={styles.input}
                 /> */}
-                <FormikProductautocomplete
-                  // label="Prepared By"
-                  options={reviewedBy} // ✅ pass state here
-                  value={formData.ReviewedBy}
-                  disabled={
-                    formData.BatchStatus === "" ||
-                    formData.BatchStatus === "Reviewed"
-                  }
-                  onChange={(value) => {
-                    console.log("Selected RecordID:", value);
-                    if (value) {
-                      setselectedreviewedBy(value);
-                    } else {
-                      setselectedreviewedBy(null);
+                  <FormikProductautocomplete
+                    // label="Prepared By"
+                    options={reviewedBy} // ✅ pass state here
+                    value={formData.ReviewedBy}
+                    disabled={
+                      true
                     }
-                    setFormData((prev) => ({
-                      ...prev,
-                      ReviewedBy: value,
-                    }));
-                  }}
-                />
-              </td>
+                    onChange={(value) => {
+                      console.log("Selected RecordID:", value);
+                      if (value) {
+                        setselectedreviewedBy(value);
+                      } else {
+                        setselectedreviewedBy(null);
+                      }
+                      setFormData((prev) => ({
+                        ...prev,
+                        ReviewedBy: value,
+                      }));
+                    }}
+                  />
+                </td>
 
-              <td style={styles.cell}>
-                {/* <input
+                <td style={styles.cell}>
+                  {/* <input
                   type="text"
                   name="ApprovdBy"
                   value={formData.ApprovdBy || ""}
                   onChange={handleChange}
                   style={styles.input}
                 /> */}
-                <FormikProductautocomplete
-                  // label="Prepared By"
-                  options={approvedBy} // ✅ pass state here
-                  value={formData.ApprovdBy}
-                  disabled={
-                    formData.BatchStatus === "Approved" ||
-                    formData.BatchStatus === "Prepared"
-                  }
-                  onChange={(value) => {
-                    console.log("Selected RecordID:", value);
-                    if (value) {
-                      setselectedapprovedBy(value);
-                    } else {
-                      setselectedapprovedBy(null);
+                  <FormikProductautocomplete
+                    // label="Prepared By"
+                    options={approvedBy} // ✅ pass state here
+                    value={formData.ApprovdBy}
+                    disabled={true
+                      // formData.BatchStatus === "Approved" ||
+                      // formData.BatchStatus === "Prepared"
                     }
-                    setFormData((prev) => ({
-                      ...prev,
-                      ApprovdBy: value,
-                    }));
-                  }}
-                />
-              </td>
-            </tr>
+                    onChange={(value) => {
+                      console.log("Selected RecordID:", value);
+                      if (value) {
+                        setselectedapprovedBy(value);
+                      } else {
+                        setselectedapprovedBy(null);
+                      }
+                      setFormData((prev) => ({
+                        ...prev,
+                        ApprovdBy: value,
+                      }));
+                    }}
+                  />
+                </td>
+              </tr>
 
-            {/* Sign & Date Row */}
-            <tr>
-              <td style={{ ...styles.cell, fontWeight: "bold" }}>
-                Sign & Date
-              </td>
+              {/* Sign & Date Row */}
+              <tr>
+                <td style={{ ...styles.cell, fontWeight: "bold" }}>
+                  Sign & Date
+                </td>
 
-              <td style={styles.cell}>
-                <input
-                  type="text"
-                  name="PreparedDate"
-                  value={formData.PreparedDate || ""}
-                  onChange={handleChange}
-                  style={styles.input}
-                  readOnly
-                />
-              </td>
+                <td style={styles.cell}>
+                  <input
+                    type="text"
+                    name="PreparedDate"
+                    value={formData.PreparedDate || ""}
+                    onChange={handleChange}
+                    style={styles.input}
+                    readOnly
+                  />
+                </td>
 
-              <td style={styles.cell}>
-                <input
-                  type="text"
-                  name="ReviewedDate"
-                  value={formData.ReviewedDate || ""}
-                  onChange={handleChange}
-                  style={styles.input}
-                  readOnly
-                />
-              </td>
+                <td style={styles.cell}>
+                  <input
+                    type="text"
+                    name="ReviewedDate"
+                    value={formData.ReviewedDate || ""}
+                    onChange={handleChange}
+                    style={styles.input}
+                    readOnly
+                  />
+                </td>
 
-              <td style={styles.cell}>
-                <input
-                  type="text"
-                  name="ApprovdDate"
-                  value={formData.ApprovdDate || ""}
-                  onChange={handleChange}
-                  style={styles.input}
-                  readOnly
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <td style={styles.cell}>
+                  <input
+                    type="text"
+                    name="ApprovdDate"
+                    value={formData.ApprovdDate || ""}
+                    onChange={handleChange}
+                    style={styles.input}
+                    readOnly
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>)}
 
+        {/* {isAccepted && ( */}
         <div style={{ marginTop: "20px", textAlign: "right" }}>
+          {isAccepted && (
+            <button
+              // onClick={handleSave("P")}
+              onClick={() => handleSave("P")}
+              style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                backgroundColor: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                marginRight: "12px"
+              }}
+            >
+              Save & Submit
+            </button>)}
           <button
-            onClick={handleSave}
+            // onClick={handleSave("S")}
+            onClick={() => handleSave("S")}
             style={{
               padding: "10px 20px",
               fontSize: "16px",
@@ -1091,11 +1169,30 @@ if (
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
+              marginRight: "12px"   // 👈 Add this
             }}
           >
             Save
           </button>
+
+          <button
+            //onClick={handleSave}
+            onClick={() => navigate(-1)}
+            style={{
+              padding: "10px 20px",
+              fontSize: "16px",
+              backgroundColor: "#d6693e",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Cancel
+          </button>
+
         </div>
+        {/* // )} */}
       </div>
     </div>
   );
