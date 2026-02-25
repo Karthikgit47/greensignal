@@ -10,8 +10,10 @@ function ListOfSOPs() {
 
   const navigate = useNavigate();
 
-  const handleView = (id) => {
-    navigate(`/dashboard/sop-documents/${id}`);
+  const handleView = (id, sopName) => {
+    navigate(`/dashboard/sop-documents/${id}`, {
+      state: { SopName: sopName },
+    });
   };
 
   useEffect(() => {
@@ -109,7 +111,7 @@ function ListOfSOPs() {
                     }}
                     onClick={() => {
                       if (item.IsEnable === "Y") {
-                        handleView(item.RecordID);
+                        handleView(item.RecordID, item.Description);
                       }
                     }}
                   />
