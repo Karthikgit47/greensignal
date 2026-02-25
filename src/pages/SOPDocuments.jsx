@@ -6,11 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { FaE } from "react-icons/fa6";
 
 function SOPDocuments() {
+  const [data, setData] = useState([]);
+  const { id } = useParams();
 
-    const [data, setData] = useState([]);
-    const { id } = useParams();
-
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
     const handleEdit = (id, batchStatus) => {
         navigate(`/dashboard/add-form/${id}/edit`, {
@@ -18,107 +17,167 @@ function SOPDocuments() {
         })
     };
 
-    const handlePrint = (id) => {
-        navigate(`/dashboard/add-form/${id}/print`);
-    };
-    const handleAdd = () => {
-        navigate(`/dashboard/add-form/-1`);
-    };
+  const handlePrint = (id) => {
+    navigate(`/dashboard/add-form/${id}/print`);
+  };
+  const handleAdd = () => {
+    navigate(`/dashboard/add-form/-1`);
+  };
 
-    const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("");
 
-    useEffect(() => {
-        const storedUser = sessionStorage.getItem("username");
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem("username");
+    console.log("Fetching and User:", storedUser);
+    if (storedUser) {
+      setUsername(storedUser);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // const storedUser = sessionStorage.getItem("username");
+        const storedUser = sessionStorage.getItem("EmpData");
+        // console.log(storedUser.Data)
+        const parsedUser = JSON.parse(storedUser);
+        const PrepareBy = parsedUser.Data.EMP_PREPAREDBY;
+        const ReviewBY = parsedUser.Data.EMP_REVIEWBY;
+        const ApprovedBy = parsedUser.Data.EMP_APPROVEDBY;
+
+        console.log(parsedUser); // full object
+        console.log(parsedUser.Data); // Data object
+        console.log(parsedUser.Data.EMP_NAME); // specific value
         console.log("Fetching and User:", storedUser);
-        if (storedUser) {
-            setUsername(storedUser);
+        let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID}`;
+
+        let Filter = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND (Preparedby =${parsedUser.Data.EMP_RECID} OR Approvdby =${parsedUser.Data.EMP_RECID} OR ReviewedBy=${parsedUser.Data.EMP_RECID})`;
+        let statuses = [];
+
+        if (PrepareBy === "Y") {
+          statuses.push("'Yet to be Picked','Prepared'");
         }
-    }, []);
 
+        if (ReviewBY === "Y") {
+          statuses.push("'Reviewed'");
+        }
 
+        if (ApprovedBy === "Y") {
+          statuses.push("'Approved'");
+        }
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const storedUser = sessionStorage.getItem("username");
-                console.log("Fetching and User:", storedUser);
-                let Filter = "CompanyID=76";
-                if (storedUser == "Kabilan") {
-                    Filter += " AND BatchStatus='Prepared'";
-                }
-                if (storedUser == "Nk") {
-                    Filter += " AND BatchStatus='Ready'";
-                }
-                if (storedUser == "Cal") {
-                    Filter += " AND BatchStatus IN ('Reviewed', 'Approved')";
+        let batchstatus = "";
 
-                }
-                const payload = {
-                    Query: {
-                        AccessID: "TR335",
-                        ScreenName: "SOPDocuments",
-                        Filter: Filter,
-                        Any: ""
-                    }
-                };
+        if (statuses.length > 0) {
+          batchstatus = "BatchStatus IN (" + statuses.join(", ") + ")";
+          Filter +=` AND ${batchstatus} `
+        }
 
-                const response = await axios.get(
-                    "https://bosuat.beyondexs.com/api/wslistview_mysql.php",
-                    {
-                        params: {
-                            data: JSON.stringify(payload)
-                        },
-                        headers: {
-                            Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
-                        }
-                    }
-                );
+        console.log(batchstatus);
+        // if (PrepareBy == "Y") {
+        //   Filter += ` AND BatchStatus = 'Yet to Be Picked' AND PreparedBy = ${parsedUser.Data.EMP_RECID} AND ReviewedBy = ${parsedUser.Data.EMP_RECID} AND ApprovdBy = ${parsedUser.Data.EMP_RECID} `;
+        // }
+        // if (ReviewBY == "Y") {
+        //   Filter += " AND BatchStatus='Prepared'";
+        // }
+        // if (ApprovedBy == "Y") {
+        //   Filter += " AND BatchStatus IN ('Reviewed', 'Approved')";
+        // }
+        let conditions = [];
+        const empId = parsedUser.Data.EMP_RECID;
+        console.log(PrepareBy, "PrepareBy");
+        console.log(ApprovedBy, "ApprovedBy");
+        console.log(ReviewBY, "ReviewBY");
+        // if (PrepareBy === "Y") {
+        //   conditions.push(
+        //     `(BatchStatus = 'Yet to Be Picked' AND PreparedBy = ${empId})`,
+        //   );
+        // }
 
-                console.log("API Response:", response.data);
-                setData(response.data?.Data?.rows || []);
-            } catch (error) {
-                console.error(error.response || error);
-            }
+        // if (ReviewBY === "Y") {
+        //   conditions.push(
+        //     `(BatchStatus = 'Prepared' AND ReviewedBy = ${empId})`,
+        //   );
+        // }
+
+        // if (ApprovedBy === "Y") {
+        //   conditions.push(
+        //     `(BatchStatus IN ('Reviewed', 'Approved') AND ApprovdBy = ${empId})`,
+        //   );
+        // }
+
+        // if (conditions.length > 0) {
+        //   Filter += " AND (" + conditions.join(" OR ") + ")";
+        // }
+        console.log(Filter, "Filter");
+        const payload = {
+          Query: {
+            AccessID: "TR335",
+            ScreenName: "SOPDocuments",
+            Filter: Filter1,
+            Any: "",
+          },
         };
 
-        fetchData();
-    }, []);
+        const response = await axios.get(
+          "https://bosuat.beyondexs.com/api/wslistview_mysql.php",
+          {
+            params: {
+              data: JSON.stringify(payload),
+            },
+            headers: {
+              Authorization:
+                "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50",
+            },
+          },
+        );
 
-    return (
-        <div style={{ padding: "20px" }}>
-            {/* Top Header Section */}
-            <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "10px"
-            }}>
-                <h3>List of SOPs</h3>
+        console.log("API Response:", response.data);
+        setData(response.data?.Data?.rows || []);
+      } catch (error) {
+        console.error(error.response || error);
+      }
+    };
 
-                <FaPlus
-                    title="Add Product"
-                    style={{
-                        cursor: "pointer",
-                        color: "#2563eb",
-                        fontSize: "20px"
-                    }}
-                    onClick={handleAdd}
-                />
-            </div>
+    fetchData();
+  }, []);
 
-            <table style={styles.table}>
-                <thead>
-                    <tr>
-                        <th style={styles.th}>#</th>
-                        <th style={styles.th}>Batch No</th>
-                        <th style={styles.th}>Name of the Product</th>
-                        <th style={styles.th}>Manufacturing Date</th>
-                        <th style={styles.th}>Expiry Date</th>
-                        <th style={styles.th}>Status</th>
-                        <th style={styles.th}>Action</th>
+  return (
+    <div style={{ padding: "20px" }}>
+      {/* Top Header Section */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "10px",
+        }}
+      >
+        <h3>List of SOPs</h3>
 
-                    </tr>
-                </thead>
+        <FaPlus
+          title="Add Product"
+          style={{
+            cursor: "pointer",
+            color: "#2563eb",
+            fontSize: "20px",
+          }}
+          onClick={handleAdd}
+        />
+      </div>
+
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>#</th>
+            <th style={styles.th}>Batch No</th>
+            <th style={styles.th}>Name of the Product</th>
+            <th style={styles.th}>Manufacturing Date</th>
+            <th style={styles.th}>Expiry Date</th>
+            <th style={styles.th}>Status</th>
+            <th style={styles.th}>Action</th>
+          </tr>
+        </thead>
 
                 <tbody>
                     {data && data.length > 0 ? (
@@ -176,50 +235,50 @@ function SOPDocuments() {
 }
 
 const styles = {
-    topBar: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: "20px",
-    },
+  topBar: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "20px",
+  },
 
-    addBtn: {
-        width: "48px",
-        height: "48px",
-        borderRadius: "50%",
-        background: "#2563eb",
-        color: "#fff",
-        fontSize: "26px",
-        border: "none",
-        cursor: "pointer",
-    },
+  addBtn: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "50%",
+    background: "#2563eb",
+    color: "#fff",
+    fontSize: "26px",
+    border: "none",
+    cursor: "pointer",
+  },
 
-    table: {
-        width: "100%",
-        borderCollapse: "collapse",
-        background: "#fff",
-    },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    background: "#fff",
+  },
 
-    th: {
-        border: "1px solid #ddd",
-        padding: "12px",
-        background: "#727b88",
-        color: "#fff",
-        textAlign: "left",
-    },
+  th: {
+    border: "1px solid #ddd",
+    padding: "12px",
+    background: "#727b88",
+    color: "#fff",
+    textAlign: "left",
+  },
 
-    td: {
-        border: "1px solid #ddd",
-        padding: "10px",
-    },
+  td: {
+    border: "1px solid #ddd",
+    padding: "10px",
+  },
 
-    card: {
-        background: "#fff",
-        padding: "15px",
-        marginBottom: "15px",
-        borderRadius: "8px",
-        boxShadow: "0 3px 8px rgba(0,0,0,0.08)",
-    },
+  card: {
+    background: "#fff",
+    padding: "15px",
+    marginBottom: "15px",
+    borderRadius: "8px",
+    boxShadow: "0 3px 8px rgba(0,0,0,0.08)",
+  },
 };
 
 export default SOPDocuments;
