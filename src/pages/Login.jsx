@@ -24,6 +24,11 @@ function Login() {
       ...formData,
       [name]: value,
     });
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",  
+    }));
   };
 
   // Validation function
@@ -36,7 +41,7 @@ function Login() {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } 
+    }
 
     return newErrors;
   };
@@ -49,54 +54,54 @@ function Login() {
     setErrors(validationErrors);
 
     //
-     if (Object.keys(validationErrors).length === 0) {
+    if (Object.keys(validationErrors).length === 0) {
       console.log("Form submitted", formData);
-    try {
-      setLoading(true);
+      try {
+        setLoading(true);
 
-      const payload = {
-        Query: {
-          Code: formData.usercode,
-          Password: formData.password,
-          LicenseKey: "b2025-atm01"
-        }
-      };
-
-      
-      const response = await axios.post(
-        "https://essuat.beyondexs.com/api/ESSLController.php",
-        {
-          // data: JSON.stringify(payload)
-        },
-        {
-          params: {
-            data: JSON.stringify(payload)
-          },
-          headers: {
-            Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
+        const payload = {
+          Query: {
+            Code: formData.usercode,
+            Password: formData.password,
+            LicenseKey: "b2025-atm01"
           }
+        };
+
+
+        const response = await axios.post(
+          "https://essuat.beyondexs.com/api/ESSLController.php",
+          {
+            // data: JSON.stringify(payload)
+          },
+          {
+            params: {
+              data: JSON.stringify(payload)
+            },
+            headers: {
+              Authorization: "eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50"
+            }
+          }
+        );
+
+        console.log("Login Response:", response.data);
+
+        if (response.data.Status !== "Y") {
+          throw new Error(response.data.Msg || "Login failed");
         }
-      );
+        sessionStorage.setItem("EmpData", JSON.stringify(response.data));
+        // Store session
+        sessionStorage.setItem("username", formData.usercode);
+        sessionStorage.setItem("licence", formData.subscriptionCode);
 
-      console.log("Login Response:", response.data);
-
-      if (response.data.Status !== "Y") {
-        throw new Error(response.data.Msg || "Login failed");
+        navigate("/dashboard");
+      } catch (error) {
+        setErrorData(
+          error.response?.data?.Msg || "Something went wrong"
+        );
+      } finally {
+        setLoading(false);
       }
-      sessionStorage.setItem("EmpData", JSON.stringify(response.data));
-      // Store session
-      sessionStorage.setItem("username", formData.usercode);
-      sessionStorage.setItem("licence", formData.subscriptionCode);
-
-      navigate("/dashboard");
-    } catch (error) {
-      setErrorData(
-        error.response?.data?.Msg || "Something went wrong"
-      );
-    } finally {
-      setLoading(false);
     }
-  }
   };
 
 
@@ -143,6 +148,11 @@ function Login() {
               onChange={handleChange}
               style={styles.input}
             />
+            {errors.password && (
+              <span style={{ color: "#e94949", fontSize: "15px" }}>
+                {errors.password}
+              </span>
+            )}
           </div>
 
           <div style={styles.optionsRow}>
