@@ -11,11 +11,11 @@ function SOPDocuments() {
 
   const navigate = useNavigate();
 
-    const handleEdit = (id, batchStatus) => {
-        navigate(`/dashboard/add-form/${id}/edit`, {
-             state: { batchStatus: batchStatus } 
-        })
-    };
+  const handleEdit = (id, batchStatus) => {
+    navigate(`/dashboard/add-form/${id}/edit`, {
+      state: { batchStatus: batchStatus },
+    });
+  };
 
   const handlePrint = (id) => {
     navigate(`/dashboard/add-form/${id}/print`);
@@ -25,7 +25,9 @@ function SOPDocuments() {
   };
 
   const [username, setUsername] = useState("");
-
+  const [PrepareBy, setPrepareBy] = useState("");
+  const [ReviewBY, setReviewBy] = useState("");
+  const [ApprovedBy, setApprovedBy] = useState("");
   useEffect(() => {
     const storedUser = sessionStorage.getItem("username");
     console.log("Fetching and User:", storedUser);
@@ -33,7 +35,17 @@ function SOPDocuments() {
       setUsername(storedUser);
     }
   }, []);
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem("EmpData");
 
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+
+      setPrepareBy(parsedUser.Data.EMP_PREPAREDBY);
+      setReviewBy(parsedUser.Data.EMP_REVIEWBY);
+      setApprovedBy(parsedUser.Data.EMP_APPROVEDBY);
+    }
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -70,7 +82,7 @@ function SOPDocuments() {
 
         if (statuses.length > 0) {
           batchstatus = "BatchStatus IN (" + statuses.join(", ") + ")";
-          Filter +=` AND ${batchstatus} `
+          Filter += ` AND ${batchstatus} `;
         }
 
         console.log(batchstatus);
@@ -179,59 +191,147 @@ function SOPDocuments() {
           </tr>
         </thead>
 
-                <tbody>
-                    {data && data.length > 0 ? (
-                        data.map((item, index) => (
-                            <tr key={item.RecordID || index}>
-                                <td style={styles.td}>{item.SLNO}</td>
-                                <td style={styles.td}>{item.BatchNo}</td>
-                                <td style={styles.td}>{item.NameoftheProduct}</td>
-                                <td style={styles.td}>{item.ManufacturingDate}</td>
-                                <td style={styles.td}>{item.ExpiryDate}</td>
-                                <td style={styles.td}>{item.BatchStatus}</td>
-                                <td style={{ ...styles.td, textAlign: "center" }}>
-                                    <FaEdit
-                                        title="Edit"
-                                        style={{
-                                             cursor: item.BatchStatus === "Approved" ? "not-allowed" : "pointer",
-                                              color: item.BatchStatus !== "Approved" ? "#3561c0" : "#ccc",
-                                            // cursor: "pointer",
-                                            // color: "#3468d8",
-                                            fontSize: "18px",
-                                            marginRight: "12px"
-                                        }}
-                                        onClick={() => handleEdit(item.RecordID, item.BatchStatus)}
-                                    />
-                                    <FaPrint
-                                        title="Print"
-                                        style={{
-                                            cursor: item.BatchStatus === "Approved" ? "pointer" : "not-allowed",
-                                            color: item.BatchStatus === "Approved" ? "#142a58" : "#ccc",
-                                            fontSize: "18px",
-                                            opacity: item.BatchStatus === "Approved" ? 1 : 0.5
-                                        }}
-                                        onClick={() => {
-                                            if (item.BatchStatus === "Approved") {
-                                                handlePrint(item.RecordID);
-                                            }
-                                        }}
-                                    />
+        <tbody>
+          {/* {data && data.length > 0 ? (
+            data.map((item, index) => (
+              <tr key={item.RecordID || index}>
+                <td style={styles.td}>{item.SLNO}</td>
+                <td style={styles.td}>{item.BatchNo}</td>
+                <td style={styles.td}>{item.NameoftheProduct}</td>
+                <td style={styles.td}>{item.ManufacturingDate}</td>
+                <td style={styles.td}>{item.ExpiryDate}</td>
+                <td style={styles.td}>{item.BatchStatus}</td>
+                <td style={{ ...styles.td, textAlign: "center" }}>
+                  <FaEdit
+                    title="Edit"
+                    style={{
+                      //cursor:item.BatchStatus === "Approved"? "not-allowed": "pointer",
+                      //color: item.BatchStatus !== "Approved" ? "#3561c0" : "#ccc",
+                       cursor: "pointer",
+                       color: "#3468d8",
+                      fontSize: "18px",
+                      marginRight: "12px",
+                    }}
+                    //                                       onClick={
+                    //   item.BatchStatus !== "Approved"
+                    //     ? () => handleEdit(item.RecordID, item.BatchStatus)
+                    //     : undefined
+                    // }
+                    onClick={
+                      (PrepareBy === "Y" &&
+                        item.BatchStatus === "Yet to be Picked") ||
+                      (ReviewBY === "Y" && item.BatchStatus === "Prepared") ||
+                      (ApprovedBy === "Y" && item.BatchStatus === "Reviewed")
+                        ? () => handleEdit(item.RecordID, item.BatchStatus)
+                        : undefined
+                    }
+                    // onClick={() => handleEdit(item.RecordID, item.BatchStatus)}
+                  />
+                  <FaPrint
+                    title="Print"
+                    style={{
+                      cursor:
+                        item.BatchStatus === "Approved"
+                          ? "pointer"
+                          : "not-allowed",
+                      color:
+                        item.BatchStatus === "Approved" ? "#142a58" : "#ccc",
+                      fontSize: "18px",
+                      opacity: item.BatchStatus === "Approved" ? 1 : 0.5,
+                    }}
+                    onClick={() => {
+                      if (item.BatchStatus === "Approved") {
+                        handlePrint(item.RecordID);
+                      }
+                    }}
+                  />
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4" style={{ ...styles.td, textAlign: "center" }}>
+                No Data Found
+              </td>
+            </tr>
+          )} */}
+          {data && data.length > 0 ? (
+  data.map((item, index) => {
 
+    const canEdit =
+      (PrepareBy === "Y" && item.BatchStatus === "Yet to be Picked") ||
+      (ReviewBY === "Y" && item.BatchStatus === "Prepared") ||
+      (ApprovedBy === "Y" && item.BatchStatus === "Reviewed");
 
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="4" style={{ ...styles.td, textAlign: "center" }}>
-                                No Data Found
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
+    const canPrint = item.BatchStatus === "Approved";
+
+    return (
+      <tr key={item.RecordID || index}>
+        <td style={styles.td}>{item.SLNO}</td>
+        <td style={styles.td}>{item.BatchNo}</td>
+        <td style={styles.td}>{item.NameoftheProduct}</td>
+        <td style={styles.td}>{item.ManufacturingDate}</td>
+        <td style={styles.td}>{item.ExpiryDate}</td>
+        <td style={styles.td}>{item.BatchStatus}</td>
+
+        <td style={{ ...styles.td, textAlign: "center" }}>
+          
+          {/* ✅ EDIT */}
+          <FaEdit
+            title="Edit"
+            style={{
+              cursor: canEdit ? "pointer" : "not-allowed",
+              color: canEdit ? "#3468d8" : "#ccc",
+              fontSize: "18px",
+              marginRight: "12px",
+              pointerEvents: canEdit ? "auto" : "none"
+            }}
+            onClick={
+              canEdit
+                ? () => handleEdit(item.RecordID, item.BatchStatus)
+                : undefined
+            }
+          />
+
+          {/* ✅ PRINT */}
+          <FaPrint
+            title="Print"
+            style={{
+              // cursor: canPrint ? "pointer" : "not-allowed",
+              // color: canPrint ? "#142a58" : "#ccc",
+               cursor:  "pointer" ,
+              color: "#142a58" ,
+              fontSize: "18px",
+              //opacity: canPrint ? 1 : 0.5,
+              //pointerEvents: canPrint ? "auto" : "none"
+               opacity: 1 ,
+              pointerEvents: "auto" 
+            }}
+            // onClick={
+            //   canPrint
+            //     ? () => handlePrint(item.RecordID)
+            //     : undefined
+            // }
+            onClick={
+               () => handlePrint(item.RecordID)
+            }
+          />
+
+        </td>
+      </tr>
     );
+  })
+) : (
+  <tr>
+    <td colSpan="7" style={{ ...styles.td, textAlign: "center" }}>
+      No Data Found
+    </td>
+  </tr>
+)}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 const styles = {

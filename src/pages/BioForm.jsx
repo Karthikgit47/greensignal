@@ -329,7 +329,7 @@ function AddForm() {
     let approvedDate = formData.ApprovdDate;
     let preparedDate = formData.PreparedDate;
 
-    if (formData.BatchStatus == "Yet to be Prepared") {
+    if (formData.BatchStatus == "Yet to be Picked") {
       preparedById = UserID;
     }
     if (formData.BatchStatus == "Preapred") {
@@ -339,7 +339,7 @@ function AddForm() {
       approvedById = UserID;
     }
     if (action == "P") {
-      if (formData.BatchStatus == "Yet to be Prepared") {
+      if (formData.BatchStatus == "Yet to be Picked") {
         preparedById = UserID;
         batchStatus = "Preapred";
         preparedDate = formatted;
