@@ -64,6 +64,7 @@ function SOPDocuments() {
         console.log(parsedUser.Data); // Data object
         console.log(parsedUser.Data.EMP_NAME); // specific value
         console.log("Fetching and User:", storedUser);
+       // let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND SOPID=${id}`;
         let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID}`;
 
         let Filter = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND (Preparedby =${parsedUser.Data.EMP_RECID} OR Approvdby =${parsedUser.Data.EMP_RECID} OR ReviewedBy=${parsedUser.Data.EMP_RECID})`;

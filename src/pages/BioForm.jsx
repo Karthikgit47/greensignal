@@ -212,14 +212,14 @@ function AddForm() {
 
     fetchData();
   }, []);
-function formatDateTime(dateTime) {
-  if (!dateTime) return "";
+  function formatDateTime(dateTime) {
+    if (!dateTime) return "";
 
-  const [date, time] = dateTime.split(" ");
-  const [yyyy, mm, dd] = date.split("-");
+    const [date, time] = dateTime.split(" ");
+    const [yyyy, mm, dd] = date.split("-");
 
-  return `${dd}-${mm}-${yyyy} ${time}`;
-}
+    return `${dd}-${mm}-${yyyy} ${time}`;
+  }
   const fetchemployeedata = async () => {
     try {
       const payload = {
@@ -1159,27 +1159,35 @@ function formatDateTime(dateTime) {
             </ul>
           </div>
         )}
-        
-        {mode === "edit" && (
-          <div style={{ marginTop: "20px" }}>
-            <label style={{ cursor: "pointer" }}>
-              <input
-                type="checkbox"
-                checked={isAccepted}
-                onChange={(e) => setIsAccepted(e.target.checked)}
-                style={{ marginRight: "8px" }}
-              />
-              {/* I agree to the Terms & Conditions */}
-              The above entered details are correct and have been verified.
+        {batchStatus === "Prepared" && (
+          <div
+            style={{
+              marginTop: "30px",
+              borderRadius: "10px",
+              maxWidth: "600px",
+              width: "100%", // Ensure container uses full width
+            }}
+          >
+            <label style={{ fontWeight: "bold", color: "#003366" }}>
+              Comments
             </label>
+            <textarea
+              type="text"
+              name="ReviewComments"
+              placeholder="Enter your comments"
+              value={formData.ReviewComments || ""}
+              onChange={handleChange}
+              style={{
+                ...styles.textarea,
+                width: "100%",
+                marginTop: "20px",
+                height: "100px",
+              }}
+            />
           </div>
         )}
 
-       
-         
-      
-
-        {/* {batchStatus === "Reviewed" && (
+        {batchStatus === "Reviewed" && (
           <div
             style={{
               marginTop: "30px",
@@ -1205,7 +1213,22 @@ function formatDateTime(dateTime) {
               }}
             />
           </div>
-        )} */}
+        )}
+        {mode === "edit" && (
+          <div style={{ marginTop: "20px" }}>
+            <label style={{ cursor: "pointer" }}>
+              <input
+                type="checkbox"
+                checked={isAccepted}
+                onChange={(e) => setIsAccepted(e.target.checked)}
+                style={{ marginRight: "8px" }}
+              />
+              {/* I agree to the Terms & Conditions */}
+              The above entered details are correct and have been verified.
+            </label>
+          </div>
+        )}
+
         {mode == "print" && (
           <div
             style={{
@@ -1252,7 +1275,7 @@ function formatDateTime(dateTime) {
                   // onChange={handleChange}
                   // readOnly={true} // editable current stage
                   readOnly // always readonly (previous stage)
-                 style={{
+                  style={{
                     ...styles.textarea,
                     width: "100%",
                     marginTop: "10px",
@@ -1420,7 +1443,11 @@ function formatDateTime(dateTime) {
                         style={styles.signatureImg}
                       />
                     ) : (
-                      <div style={styles.digitalText}>{formData.PreparedDate? "Digitally Signed":"Not Signed"}</div>
+                      <div style={styles.digitalText}>
+                        {formData.PreparedDate
+                          ? "Digitally Signed"
+                          : "Not Signed"}
+                      </div>
                     )}
 
                     <div style={styles.signatureDate}>
@@ -1488,24 +1515,28 @@ function formatDateTime(dateTime) {
                   </div>
                 </td> */}
                 <td style={styles.cell}>
-  <div style={styles.signatureBox}>
-    {selectedreviewedBysign ? (
-      <img
-        src={selectedreviewedBysign}
-        alt="Reviewed Sign"
-        style={styles.signatureImg}
-      />
-    ) : (
-      <div style={styles.digitalText}>{formData.ReviewedDate? "Digitally Signed":"Not Signed"}</div>
-    )}
+                  <div style={styles.signatureBox}>
+                    {selectedreviewedBysign ? (
+                      <img
+                        src={selectedreviewedBysign}
+                        alt="Reviewed Sign"
+                        style={styles.signatureImg}
+                      />
+                    ) : (
+                      <div style={styles.digitalText}>
+                        {formData.ReviewedDate
+                          ? "Digitally Signed"
+                          : "Not Signed"}
+                      </div>
+                    )}
 
-    <div style={styles.signatureDate}>
-      {formData?.ReviewedDate
-        ? formatDateTime(formData.ReviewedDate)
-        : ""}
-    </div>
-  </div>
-</td>
+                    <div style={styles.signatureDate}>
+                      {formData?.ReviewedDate
+                        ? formatDateTime(formData.ReviewedDate)
+                        : ""}
+                    </div>
+                  </div>
+                </td>
 
                 <td style={styles.cell}>
                   <div style={styles.signatureBox}>
@@ -1516,7 +1547,11 @@ function formatDateTime(dateTime) {
                         style={styles.signatureImg}
                       />
                     ) : (
-                      <div style={styles.digitalText}>{formData.ApprovdDate? "Digitally Signed":"Not Signed"}</div>
+                      <div style={styles.digitalText}>
+                        {formData.ApprovdDate
+                          ? "Digitally Signed"
+                          : "Not Signed"}
+                      </div>
                     )}
 
                     <div style={styles.signatureDate}>
@@ -1541,18 +1576,34 @@ function formatDateTime(dateTime) {
 
         {/* {isAccepted && ( */}
         <div style={{ marginTop: "20px", textAlign: "right" }}>
-          {isAccepted && batchStatus !== "Approved" && (
+          {mode === "edit" && batchStatus !== "Approved" && (
+            // <button
+            //   // onClick={handleSave("P")}
+            //   onClick={() => handleSave("P")}
+            //   style={{
+            //     padding: "10px 20px",
+            //     fontSize: "16px",
+            //     backgroundColor: "#4CAF50",
+            //     color: "white",
+            //     border: "none",
+            //     borderRadius: "5px",
+            //     cursor: "pointer",
+            //     marginRight: "12px",
+            //   }}
+            // >
+            //   Save & Submit
+            // </button>
             <button
-              // onClick={handleSave("P")}
               onClick={() => handleSave("P")}
+              disabled={!isAccepted}
               style={{
                 padding: "10px 20px",
                 fontSize: "16px",
-                backgroundColor: "#4CAF50",
+                backgroundColor: isAccepted ? "#4CAF50" : "#9E9E9E",
                 color: "white",
                 border: "none",
                 borderRadius: "5px",
-                cursor: "pointer",
+                cursor: isAccepted ? "pointer" : "not-allowed",
                 marginRight: "12px",
               }}
             >

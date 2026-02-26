@@ -10,10 +10,8 @@ function ListOfSOPs() {
 
   const navigate = useNavigate();
 
-  const handleView = (id, sopName) => {
-    navigate(`/dashboard/sop-documents/${id}`, {
-      state: { SopName: sopName },
-    });
+  const handleView = (id) => {
+    navigate(`/dashboard/sop-documents/${id}`);
   };
 
   useEffect(() => {
@@ -75,6 +73,16 @@ function ListOfSOPs() {
         }}
       >
         <h3>List of SOPs</h3>
+
+        {/* <FaPlus
+          title="Add Product"
+          style={{
+            cursor: "pointer",
+            color: "#2563eb",
+            fontSize: "20px",
+          }}
+          onClick={handleAdd}
+        /> */}
       </div>
       <table style={styles.table}>
         <thead>
@@ -111,7 +119,7 @@ function ListOfSOPs() {
                     }}
                     onClick={() => {
                       if (item.IsEnable === "Y") {
-                        handleView(item.RecordID, item.Description);
+                        handleView(item.RecordID);
                       }
                     }}
                   />
