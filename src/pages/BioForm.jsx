@@ -1159,6 +1159,7 @@ function formatDateTime(dateTime) {
             </ul>
           </div>
         )}
+        
         {mode === "edit" && (
           <div style={{ marginTop: "20px" }}>
             <label style={{ cursor: "pointer" }}>
@@ -1174,35 +1175,11 @@ function formatDateTime(dateTime) {
           </div>
         )}
 
-        {isAccepted && batchStatus === "Prepared" && (
-          <div
-            style={{
-              marginTop: "30px",
-              borderRadius: "10px",
-              maxWidth: "600px",
-              width: "100%", // Ensure container uses full width
-            }}
-          >
-            <label style={{ fontWeight: "bold", color: "#003366" }}>
-              Comments
-            </label>
-            <textarea
-              type="text"
-              name="ReviewComments"
-              placeholder="Enter your comments"
-              value={formData.ReviewComments || ""}
-              onChange={handleChange}
-              style={{
-                ...styles.textarea,
-                width: "100%",
-                marginTop: "20px",
-                height: "100px",
-              }}
-            />
-          </div>
-        )}
+       
+         
+      
 
-        {isAccepted && batchStatus === "Reviewed" && (
+        {/* {batchStatus === "Reviewed" && (
           <div
             style={{
               marginTop: "30px",
@@ -1228,7 +1205,7 @@ function formatDateTime(dateTime) {
               }}
             />
           </div>
-        )}
+        )} */}
         {mode == "print" && (
           <div
             style={{

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { FaEdit, FaArrowRight, FaPrint, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FaE } from "react-icons/fa6";
@@ -9,8 +9,8 @@ function SOPDocuments() {
   const [data, setData] = useState([]);
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
-const location = useLocation();
- const { SopName } = location.state || {};
+
+
   const navigate = useNavigate();
 
   const handleEdit = (id, batchStatus) => {
@@ -160,7 +160,7 @@ const location = useLocation();
   }, []);
 
   return (
-    <div style={{ padding: "0px" }}>
+    <div style={{ padding: "4px" }}>
       <style>{spinnerKeyframes}</style>
       {/* Top Header Section */}
       <div
@@ -171,16 +171,8 @@ const location = useLocation();
           marginBottom: "10px",
         }}
       >
-        {/* <h3>List of SOPs / {SopName}</h3> */}
-<h3 >
-  <span
-    style={{  cursor: "pointer" }}
-    onClick={() => navigate("/dashboard/list-of-sops")}
-  >
-    List of SOPs
-  </span>{" "}
-  / {SopName}
-</h3>
+        <h3>List of SOPs</h3>
+
         {/* <FaPlus
           title="Add Product"
           style={{
