@@ -1443,7 +1443,7 @@ function formatDateTime(dateTime) {
                         style={styles.signatureImg}
                       />
                     ) : (
-                      <div style={styles.digitalText}>Digitally Signed</div>
+                      <div style={styles.digitalText}>{formData.PreparedDate? "Digitally Signed":"Not Signed"}</div>
                     )}
 
                     <div style={styles.signatureDate}>
@@ -1463,7 +1463,7 @@ function formatDateTime(dateTime) {
                   />
                 </td> */}
                 {/* Reviewed */}
-                <td style={styles.cell}>
+                {/* <td style={styles.cell}>
                   <div
                     style={{
                       border: "1px solid #ddd",
@@ -1475,7 +1475,6 @@ function formatDateTime(dateTime) {
                       background: "#fafafa",
                     }}
                   >
-                    {/* Signature OR Digital Text */}
                     {selectedreviewedBysign ? (
                       <img
                         src={selectedreviewedBysign}
@@ -1500,7 +1499,6 @@ function formatDateTime(dateTime) {
                       </div>
                     )}
 
-                    {/* Date */}
                     <div
                       style={{
                         fontSize: "12px",
@@ -1511,7 +1509,26 @@ function formatDateTime(dateTime) {
                       {formatDateTime(formData.ReviewedDate) || ""}
                     </div>
                   </div>
-                </td>
+                </td> */}
+                <td style={styles.cell}>
+  <div style={styles.signatureBox}>
+    {selectedreviewedBysign ? (
+      <img
+        src={selectedreviewedBysign}
+        alt="Reviewed Sign"
+        style={styles.signatureImg}
+      />
+    ) : (
+      <div style={styles.digitalText}>{formData.ReviewedDate? "Digitally Signed":"Not Signed"}</div>
+    )}
+
+    <div style={styles.signatureDate}>
+      {formData?.ReviewedDate
+        ? formatDateTime(formData.ReviewedDate)
+        : ""}
+    </div>
+  </div>
+</td>
 
                 <td style={styles.cell}>
                   <div style={styles.signatureBox}>
@@ -1522,7 +1539,7 @@ function formatDateTime(dateTime) {
                         style={styles.signatureImg}
                       />
                     ) : (
-                      <div style={styles.digitalText}>Digitally Signed</div>
+                      <div style={styles.digitalText}>{formData.ApprovdDate? "Digitally Signed":"Not Signed"}</div>
                     )}
 
                     <div style={styles.signatureDate}>
