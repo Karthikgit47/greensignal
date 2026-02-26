@@ -535,7 +535,7 @@ function AddForm() {
           TotalVialsRelease: Number(formData.TotalVialsRelease) || 0,
           BatchStatus: batchStatus,
           RowbyRowRejection: Number(formData.RowbyRowRejection) || 0,
-          SOPID: 1,
+          SOPID: formData.SOPID || 0,
           PreparedBy: preparedById || 0,
           ReviewedBy: reviewedById || 0,
           ApprovdBy: approvedById || 0,
@@ -566,7 +566,7 @@ function AddForm() {
       toast.success("Data saved successfully!");
 
       setTimeout(() => {
-        navigate(`/dashboard/sop-documents/${id}`);
+        navigate(`/dashboard/sop-documents/${formData.SOPID || id}`);
       }, 1500);
       // navigate(`/dashboard/sop-documents/${id}`);
     } catch (error) {
@@ -1106,11 +1106,11 @@ function AddForm() {
         {batchStatus === "Prepared" && mode === "edit" && (
           <div
             style={{
-              marginTop: "30px",
+              marginTop: "10px",
               padding: "20px",
-              border: "2px solid #9cb0c5",
+              //border: "2px solid #9cb0c5",
               borderRadius: "10px",
-              backgroundColor: "#E6F0FF",
+              //backgroundColor: "#E6F0FF",
               maxWidth: "600px",
             }}
           >
@@ -1134,11 +1134,11 @@ function AddForm() {
         {batchStatus == "Reviewed" && mode === "edit" && (
           <div
             style={{
-              marginTop: "30px",
+              marginTop: "10px",
               padding: "20px",
-              border: "2px solid #9cb0c5",
+              //border: "2px solid #9cb0c5",
               borderRadius: "10px",
-              backgroundColor: "#E6F0FF",
+              //backgroundColor: "#E6F0FF",
               maxWidth: "600px",
             }}
           >
@@ -1162,9 +1162,8 @@ function AddForm() {
         {batchStatus === "Prepared" && (
           <div
             style={{
-              marginTop: "30px",
               borderRadius: "10px",
-              maxWidth: "600px",
+              //maxWidth: "600px",
               width: "100%", // Ensure container uses full width
             }}
           >
@@ -1182,6 +1181,7 @@ function AddForm() {
                 width: "100%",
                 marginTop: "20px",
                 height: "100px",
+                resize: "none",
               }}
             />
           </div>
@@ -1190,9 +1190,9 @@ function AddForm() {
         {batchStatus === "Reviewed" && (
           <div
             style={{
-              marginTop: "30px",
+              marginTop: "10px",
               borderRadius: "10px",
-              maxWidth: "600px",
+              //maxWidth: "600px",
               width: "100%", // Ensure container uses full width
             }}
           >
@@ -1210,6 +1210,7 @@ function AddForm() {
                 width: "100%",
                 marginTop: "20px",
                 height: "100px",
+                resize: "none",
               }}
             />
           </div>
@@ -1235,7 +1236,7 @@ function AddForm() {
               display: "flex",
               gap: "20px",
               marginTop: "30px",
-              maxWidth: "900px",
+              //maxWidth: "900px",
               width: "100%",
             }}
           >
@@ -1256,6 +1257,7 @@ function AddForm() {
                     marginTop: "10px",
                     height: "100px",
                     backgroundColor: "#f5f5f5",
+                    resize: "none",
                   }}
                 />
               </div>
@@ -1281,6 +1283,7 @@ function AddForm() {
                     marginTop: "10px",
                     height: "100px",
                     backgroundColor: "#f5f5f5",
+                    resize: "none",
                   }}
                 />
               </div>
