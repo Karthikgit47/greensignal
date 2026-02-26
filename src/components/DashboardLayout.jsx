@@ -33,7 +33,7 @@ function DashboardLayout() {
           >
             ☰
           </button>
-          <span style={{ fontWeight: "600" }}>Dashboard</span>
+          {/* <span style={{ fontWeight: "600" }}>Dashboard</span> */}
         </div>
 
         <div style={styles.content}>
@@ -105,6 +105,7 @@ const styles = {
   },
   content: {
     padding: "25px",
+    paddingTop: "0px",
   },
 
   /* Dashboard Grid */

@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FormikProductautocomplete } from "../components/Autocomplete";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 function AddForm() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [data, setData] = useState({});
@@ -26,6 +28,9 @@ function AddForm() {
   const [selectedreviewedBy, setselectedreviewedBy] = useState(null);
   const [approvedBy, setapprovedBy] = useState([]);
   const [selectedapprovedBy, setselectedapprovedBy] = useState(null);
+  const [selectedpreparedBysign, setselectedpreparedBysign] = useState(null);
+  const [selectedreviewedBysign, setselectedreviewedBysgn] = useState(null);
+  const [selectedapprovedBySign, setselectedapprovedBySign] = useState(null);
 
   const [formData, setFormData] = useState({
     NameoftheProduct: "",
@@ -62,7 +67,7 @@ function AddForm() {
     TotalVialsReadySummary: 0,
     TotalVialsRelease: 0,
     BatchStatus: "Prepared",
-
+    ApprovdName: "",
     PreparedName: "",
     PreparedBy: "",
     PreparedDate: "",
@@ -176,6 +181,23 @@ function AddForm() {
             ...response.data.Data,
           }));
         }
+        const BASE_URL = "https://bosuat.beyondexs.com/uploads/sopatachments/";
+
+        const data = response.data?.Data;
+
+        if (data) {
+          setselectedpreparedBysign(
+            data.PreparedSign1 ? BASE_URL + data.PreparedSign1 : "",
+          );
+
+          setselectedreviewedBysgn(
+            data.ReviewedSign1 ? BASE_URL + data.ReviewedSign1 : "",
+          );
+
+          setselectedapprovedBySign(
+            data.ApprovdSign1 ? BASE_URL + data.ApprovdSign1 : "",
+          );
+        }
       } catch (error) {
         console.error(error.response || error);
       }
@@ -190,7 +212,14 @@ function AddForm() {
 
     fetchData();
   }, []);
+function formatDateTime(dateTime) {
+  if (!dateTime) return "";
 
+  const [date, time] = dateTime.split(" ");
+  const [yyyy, mm, dd] = date.split("-");
+
+  return `${dd}-${mm}-${yyyy} ${time}`;
+}
   const fetchemployeedata = async () => {
     try {
       const payload = {
@@ -236,6 +265,46 @@ function AddForm() {
       background: "#f0f2f5",
       display: "flex",
       justifyContent: "center",
+    },
+
+    cell: {
+      border: "1px solid #ccc",
+      padding: "10px",
+      textAlign: "center",
+      verticalAlign: "middle",
+    },
+
+    signatureBox: {
+      border: "1px solid #d0d0d0",
+      borderRadius: "8px",
+      padding: "8px",
+      width: "190px",
+      height: "80px", // ⭐ fixed height for all
+      margin: "auto",
+      background: "#f7f7f7",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+
+    signatureImg: {
+      height: "38px",
+      objectFit: "contain",
+      marginBottom: "4px",
+    },
+
+    digitalText: {
+      fontSize: "14px",
+      color: "#555",
+      fontStyle: "italic",
+      marginBottom: "4px",
+    },
+
+    signatureDate: {
+      fontSize: "12px",
+      fontWeight: "600",
+      color: "#222",
     },
 
     container: {
@@ -306,7 +375,19 @@ function AddForm() {
     console.log(action, "action");
     const today = new Date().toISOString().split("T")[0];
     const now = new Date();
-    const formatted = now.toISOString().slice(0, 19).replace("T", " ");
+    // const formatted = now.toISOString().slice(0, 19).replace("T", " ");
+    const formatted = now
+      .toLocaleString("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      })
+      .replace(",", "");
     console.log(formatted);
     // const storedUser = sessionStorage.getItem("username");
     // console.log("Fetching and User:", storedUser);
@@ -332,7 +413,7 @@ function AddForm() {
     if (formData.BatchStatus == "Yet to be Picked") {
       preparedById = UserID;
     }
-    if (formData.BatchStatus == "Preapred") {
+    if (formData.BatchStatus == "Prepared") {
       reviewedById = UserID;
     }
     if (formData.BatchStatus == "Reviewed") {
@@ -341,10 +422,10 @@ function AddForm() {
     if (action == "P") {
       if (formData.BatchStatus == "Yet to be Picked") {
         preparedById = UserID;
-        batchStatus = "Preapred";
+        batchStatus = "Prepared";
         preparedDate = formatted;
       }
-      if (formData.BatchStatus == "Preapred") {
+      if (formData.BatchStatus == "Prepared") {
         reviewedById = UserID;
         batchStatus = "Reviewed";
         reviewedDate = formatted;
@@ -481,16 +562,29 @@ function AddForm() {
       );
 
       console.log("Response:", response.data);
-      alert("Data saved successfully!");
-      navigate(`/dashboard/sop-documents/${id}`);
+      // alert("Data saved successfully!");
+      toast.success("Data saved successfully!");
+
+      setTimeout(() => {
+        navigate(`/dashboard/sop-documents/${id}`);
+      }, 1500);
+      // navigate(`/dashboard/sop-documents/${id}`);
     } catch (error) {
       console.error("Save error:", error.response?.data || error);
-      alert("Error saving data! Check console for details.");
+      toast.error("Error saving data! Check console for details.");
     }
   };
 
   return (
     <div style={styles.wrapper}>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
       <div style={styles.container}>
         {/* Top Table */}
         <table style={{ ...styles.table, marginBottom: "20px" }}>
@@ -522,14 +616,13 @@ function AddForm() {
                   name="IP"
                   value="Y"
                   checked={formData.IP === "Y"}
-                  
-                  onChange={(e) =>{
-                     if (mode !== "print") {
-                    setFormData((prev) => ({
-                      ...prev,
-                      IP: e.target.checked ? "Y" : "N",
-                    }))
-                   }
+                  onChange={(e) => {
+                    if (mode !== "print") {
+                      setFormData((prev) => ({
+                        ...prev,
+                        IP: e.target.checked ? "Y" : "N",
+                      }));
+                    }
                   }}
                 />
               </td>
@@ -544,14 +637,14 @@ function AddForm() {
                   value="Y"
                   readOnly={mode === "print"}
                   checked={formData.BP === "Y"}
-                  onChange={(e) =>{
-                     if (mode !== "print") {
-                    setFormData((prev) => ({
-                      ...prev,
-                      BP: e.target.checked ? "Y" : "N",
-                    }))
-                     }}
-                  }
+                  onChange={(e) => {
+                    if (mode !== "print") {
+                      setFormData((prev) => ({
+                        ...prev,
+                        BP: e.target.checked ? "Y" : "N",
+                      }));
+                    }
+                  }}
                 />
               </td>
 
@@ -660,7 +753,7 @@ function AddForm() {
                   value={formData.VialWashingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                   readOnly={mode === "print"}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -675,7 +768,7 @@ function AddForm() {
                   value={formData.DepyrogenationTunnelRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                   readOnly={mode === "print"}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -694,7 +787,7 @@ function AddForm() {
                   }
                   onChange={handleChange}
                   style={styles.input}
-                   readOnly={mode === "print"}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -833,7 +926,7 @@ function AddForm() {
                   value={formData.CDLaddGMSDSamples || ""}
                   onChange={handleChange}
                   style={styles.input}
-                   readOnly={mode === "print"}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -848,7 +941,7 @@ function AddForm() {
                   value={formData.RetentionSamples || ""}
                   onChange={handleChange}
                   style={styles.input}
-                   readOnly={mode === "print"}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -863,7 +956,7 @@ function AddForm() {
                   value={formData.OtherSamples || ""}
                   onChange={handleChange}
                   style={styles.input}
-                   readOnly={mode === "print"}
+                  readOnly={mode === "print"}
                 />
               </td>
             </tr>
@@ -1010,7 +1103,62 @@ function AddForm() {
             </tr>
           </tbody>
         </table>
-
+        {batchStatus === "Prepared" && mode === "edit" && (
+          <div
+            style={{
+              marginTop: "30px",
+              padding: "20px",
+              border: "2px solid #9cb0c5",
+              borderRadius: "10px",
+              backgroundColor: "#E6F0FF",
+              maxWidth: "600px",
+            }}
+          >
+            <h2 style={{ marginBottom: "15px", color: "#003366" }}>
+              Review Check List
+            </h2>
+            <ul
+              style={{
+                paddingLeft: "25px",
+                fontSize: "18px",
+                fontWeight: "500",
+                lineHeight: "2",
+              }}
+            >
+              <li>Number verified</li>
+              <li>Form Checked</li>
+              <li>Datas are in order</li>
+            </ul>
+          </div>
+        )}
+        {batchStatus == "Reviewed" && mode === "edit" && (
+          <div
+            style={{
+              marginTop: "30px",
+              padding: "20px",
+              border: "2px solid #9cb0c5",
+              borderRadius: "10px",
+              backgroundColor: "#E6F0FF",
+              maxWidth: "600px",
+            }}
+          >
+            <h2 style={{ marginBottom: "15px", color: "#003366" }}>
+              Approve Check List
+            </h2>
+            <ul
+              style={{
+                paddingLeft: "25px",
+                fontSize: "18px",
+                fontWeight: "500",
+                lineHeight: "2",
+              }}
+            >
+              <li>Number verified</li>
+              <li>Form Checked</li>
+              <li>Datas are in order</li>
+            </ul>
+          </div>
+        )}
         {mode === "edit" && (
           <div style={{ marginTop: "20px" }}>
             <label style={{ cursor: "pointer" }}>
@@ -1054,7 +1202,7 @@ function AddForm() {
           </div>
         )}
 
-        {isAccepted && batchStatus === "Revieved" && (
+        {isAccepted && batchStatus === "Reviewed" && (
           <div
             style={{
               marginTop: "30px",
@@ -1081,7 +1229,64 @@ function AddForm() {
             />
           </div>
         )}
+        {mode == "print" && (
+          <div
+            style={{
+              display: "flex",
+              gap: "20px",
+              marginTop: "30px",
+              maxWidth: "900px",
+              width: "100%",
+            }}
+          >
+            {/* Review Comments — LEFT */}
+            {formData.ReviewComments && (
+              <div style={{ flex: 1 }}>
+                <label style={{ fontWeight: "bold", color: "#003366" }}>
+                  Review Comments
+                </label>
 
+                <textarea
+                  name="ReviewComments"
+                  value={formData.ReviewComments}
+                  readOnly // always readonly (previous stage)
+                  style={{
+                    ...styles.textarea,
+                    width: "100%",
+                    marginTop: "10px",
+                    height: "100px",
+                    backgroundColor: "#f5f5f5",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Approved Comments — RIGHT */}
+            {formData.ApprovedComments && (
+              <div style={{ flex: 1 }}>
+                <label style={{ fontWeight: "bold", color: "#003366" }}>
+                  Approved Comments
+                </label>
+
+                <textarea
+                  name="ApprovedComments"
+                  placeholder="Enter your comments"
+                  value={formData.ApprovedComments || ""}
+                  // onChange={handleChange}
+                  // readOnly={true} // editable current stage
+                  readOnly // always readonly (previous stage)
+                 style={{
+                    ...styles.textarea,
+                    width: "100%",
+                    marginTop: "10px",
+                    height: "100px",
+                    backgroundColor: "#f5f5f5",
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        )}
         {/* {batchStatus === "Prepared" && (
           <div
             style={{
@@ -1095,34 +1300,6 @@ function AddForm() {
           </div>)} */}
 
         {/* Approval Section */}
-        {isAccepted && batchStatus === "Reviewed" && (
-          <div
-            style={{
-              marginTop: "30px",
-              padding: "20px",
-              border: "2px solid #9cb0c5",
-              borderRadius: "10px",
-              backgroundColor: "#E6F0FF",
-              maxWidth: "600px",
-            }}
-          >
-            <h2 style={{ marginBottom: "15px", color: "#003366" }}>
-              Approve Check List
-            </h2>
-            <ul
-              style={{
-                paddingLeft: "25px",
-                fontSize: "18px",
-                fontWeight: "500",
-                lineHeight: "2",
-              }}
-            >
-              <li>Number verified</li>
-              <li>Form Checked</li>
-              <li>Datas are in order</li>
-            </ul>
-          </div>
-        )}
 
         {mode === "print" && (
           <table style={{ ...styles.table, marginTop: "25px" }}>
@@ -1181,7 +1358,7 @@ function AddForm() {
                   <input
                     type="text"
                     name="ReviewedBy"
-                    value={formData.ReviewedBy || ""}
+                    value={formData.ReviewedName || ""}
                     onChange={handleChange}
                     style={styles.inputtext}
                     readOnly={mode === "print"}
@@ -1212,7 +1389,7 @@ function AddForm() {
                   <input
                     type="text"
                     name="ApprovdBy"
-                    value={formData.ApprovdBy || ""}
+                    value={formData.ApprovdName || ""}
                     onChange={handleChange}
                     style={styles.inputtext}
                     readOnly={mode === "print"}
@@ -1247,7 +1424,7 @@ function AddForm() {
                   Sign & Date
                 </td>
 
-                <td style={styles.cell}>
+                {/* <td style={styles.cell}>
                   <input
                     type="text"
                     name="PreparedDate"
@@ -1256,9 +1433,26 @@ function AddForm() {
                     style={styles.input}
                     readOnly
                   />
+                </td> */}
+                <td style={styles.cell}>
+                  <div style={styles.signatureBox}>
+                    {selectedpreparedBysign ? (
+                      <img
+                        src={selectedpreparedBysign}
+                        alt="Prepared Sign"
+                        style={styles.signatureImg}
+                      />
+                    ) : (
+                      <div style={styles.digitalText}>Digitally Signed</div>
+                    )}
+
+                    <div style={styles.signatureDate}>
+                      {formatDateTime(formData.PreparedDate) || ""}
+                    </div>
+                  </div>
                 </td>
 
-                <td style={styles.cell}>
+                {/* <td style={styles.cell}>
                   <input
                     type="text"
                     name="ReviewedDate"
@@ -1267,9 +1461,76 @@ function AddForm() {
                     style={styles.input}
                     readOnly
                   />
+                </td> */}
+                {/* Reviewed */}
+                <td style={styles.cell}>
+                  <div
+                    style={{
+                      border: "1px solid #ddd",
+                      borderRadius: "6px",
+                      padding: "6px",
+                      width: "180px",
+                      margin: "auto",
+                      textAlign: "center",
+                      background: "#fafafa",
+                    }}
+                  >
+                    {/* Signature OR Digital Text */}
+                    {selectedreviewedBysign ? (
+                      <img
+                        src={selectedreviewedBysign}
+                        alt="Reviewed Sign"
+                        style={{
+                          height: "40px",
+                          objectFit: "contain",
+                          display: "block",
+                          margin: "0 auto 4px",
+                        }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          fontSize: "13px",
+                          color: "#666",
+                          fontStyle: "italic",
+                          marginBottom: "4px",
+                        }}
+                      >
+                        Digitally Signed
+                      </div>
+                    )}
+
+                    {/* Date */}
+                    <div
+                      style={{
+                        fontSize: "12px",
+                        color: "#333",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {formatDateTime(formData.ReviewedDate) || ""}
+                    </div>
+                  </div>
                 </td>
 
                 <td style={styles.cell}>
+                  <div style={styles.signatureBox}>
+                    {selectedapprovedBySign ? (
+                      <img
+                        src={selectedapprovedBySign}
+                        alt="Approved Sign"
+                        style={styles.signatureImg}
+                      />
+                    ) : (
+                      <div style={styles.digitalText}>Digitally Signed</div>
+                    )}
+
+                    <div style={styles.signatureDate}>
+                      {formatDateTime(formData.ApprovdDate) || ""}
+                    </div>
+                  </div>
+                </td>
+                {/* <td style={styles.cell}>
                   <input
                     type="text"
                     name="ApprovdDate"
@@ -1278,7 +1539,7 @@ function AddForm() {
                     style={styles.input}
                     readOnly
                   />
-                </td>
+                </td> */}
               </tr>
             </tbody>
           </table>
@@ -1305,7 +1566,7 @@ function AddForm() {
             </button>
           )}
 
-          {batchStatus != "Approved" && mode === "edit" &&(
+          {batchStatus != "Approved" && mode === "edit" && (
             <button
               // onClick={handleSave("S")}
               onClick={() => handleSave("S")}
