@@ -1,6 +1,7 @@
+
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 function DashboardLayout() {
@@ -8,13 +9,24 @@ function DashboardLayout() {
   const location = useLocation();
   const isDashboardHome = location.pathname === "/dashboard";
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const dashboardBoxes = [
     { title: "QUALITY", color: "#5a5c69" },
     { title: "LOGISTICS", color: "#fd7e14" },
-    { title: "ADMIN", color: "#20c997" },    
+    { title: "ADMIN", color: "#20c997" },
     { title: "SOP", color: "#f6c23e" },
     { title: "HR", color: "#e74a3b" },
-    { title: "PRODUCTION", color: "#858796" },   
+    { title: "PRODUCTION", color: "#858796" },
     { title: "SALES", color: "#4e73df" },
     { title: "PURCHASE", color: "#1cc88a" },
     { title: "INVENTORY", color: "#36b9cc" },
@@ -22,8 +34,7 @@ function DashboardLayout() {
 
   return (
     <div style={styles.layout}>
-      <Sidebar isOpen={isOpen} />
-
+     <Sidebar isOpen={isOpen} />
       <div style={styles.main}>
         {/* Top Header */}
         <div style={styles.header}>
@@ -36,9 +47,9 @@ function DashboardLayout() {
           {/* <span style={{ fontWeight: "600" }}>Dashboard</span> */}
         </div>
 
-        <div style={styles.content}>
+       <div style={styles.content(isMobile)}>
           {isDashboardHome && (
-            <div style={styles.grid}>
+           <div style={styles.grid(isMobile)}>
               {dashboardBoxes.map((box, index) => (
                 <div
                   key={index}
@@ -103,17 +114,17 @@ const styles = {
     border: "none",
     cursor: "pointer",
   },
-  content: {
-    padding: "25px",
+  content: (isMobile) => ({
+    padding: isMobile ? "15px" : "25px",
     paddingTop: "0px",
-  },
+  }),
 
   /* Dashboard Grid */
-  grid: {
+  grid: (isMobile) => ({
     display: "grid",
-    gridTemplateColumns: "repeat(3, 1fr)",
+    gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
     gap: "20px",
-  },
+  }),
 
   card: {
     padding: "20px",

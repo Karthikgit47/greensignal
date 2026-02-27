@@ -7,6 +7,8 @@ import { FormikProductautocomplete } from "../components/Autocomplete";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+
 function AddForm() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [data, setData] = useState({});
@@ -575,6 +577,48 @@ function AddForm() {
     }
   };
 
+
+  const handleAdd = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to Strike this record?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#28a745",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+    });
+
+    if (result.isConfirmed) {
+      try {
+
+        const response = await axios.post("https://bosuat.beyondexs.com/api/Strikesop.php", {
+          "RecordID": id,
+          "CompanyID": "76"
+        },
+          {
+            headers: {
+              Authorization: `eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (response.data.Status === "Y") {
+          
+          Swal.fire("Success!", response.data.Msg, "success");
+          navigate(`/dashboard/add-form/${response.data.Recid}/edit`);
+          //navigate(`/dashboard/sop-documents/${formData.SOPID || id}`);
+        } else {
+          Swal.fire("Failed!", response.data.Msg, "error");
+        }
+        // Swal.fire("Success!", "Record added successfully.", "success");
+
+      } catch (error) {
+        Swal.fire("Error!", "Something went wrong.", "error");
+      }
+    }
+  };
+
   return (
     <div style={styles.wrapper}>
       <ToastContainer
@@ -603,7 +647,7 @@ function AddForm() {
                   name="NameoftheProduct"
                   value={formData.NameoftheProduct || ""}
                   onChange={handleChange}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
 
@@ -617,7 +661,7 @@ function AddForm() {
                   value="Y"
                   checked={formData.IP === "Y"}
                   onChange={(e) => {
-                    if (mode !== "print") {
+                    if (mode !== "print" && mode !== "strike") {
                       setFormData((prev) => ({
                         ...prev,
                         IP: e.target.checked ? "Y" : "N",
@@ -658,7 +702,7 @@ function AddForm() {
                   name="BatchNo"
                   value={formData.BatchNo || ""}
                   onChange={handleChange}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -684,7 +728,7 @@ function AddForm() {
                       ExpiryDate: "",
                     }));
                   }}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
 
@@ -705,7 +749,7 @@ function AddForm() {
                       ExpiryDate: e.target.value,
                     }))
                   }
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -738,7 +782,7 @@ function AddForm() {
                   name="NumberofVials"
                   value={formData.NumberofVials || ""}
                   onChange={handleChange}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -753,7 +797,7 @@ function AddForm() {
                   value={formData.VialWashingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -768,7 +812,7 @@ function AddForm() {
                   value={formData.DepyrogenationTunnelRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -787,7 +831,7 @@ function AddForm() {
                   }
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -802,7 +846,7 @@ function AddForm() {
                   value={formData.FillingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -817,7 +861,7 @@ function AddForm() {
                   value={formData.RowbyRowRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -832,7 +876,7 @@ function AddForm() {
                   value={formData.LyophilizerUnloadingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -847,7 +891,7 @@ function AddForm() {
                   value={formData.CappingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -862,7 +906,7 @@ function AddForm() {
                   value={formData.VisualInspectionRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -877,7 +921,7 @@ function AddForm() {
                   value={formData.QCFinishedProductSampling || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -892,7 +936,7 @@ function AddForm() {
                   value={formData.LabellingRejection || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -926,7 +970,7 @@ function AddForm() {
                   value={formData.CDLaddGMSDSamples || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -941,7 +985,7 @@ function AddForm() {
                   value={formData.RetentionSamples || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -956,7 +1000,7 @@ function AddForm() {
                   value={formData.OtherSamples || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -1027,7 +1071,7 @@ function AddForm() {
                   name="VVMRejection"
                   value={formData.VVMRejection || ""}
                   onChange={handleChange}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -1045,7 +1089,7 @@ function AddForm() {
                   value={formData.TotalNumberofVialsafterVVMActivity || ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -1061,7 +1105,7 @@ function AddForm() {
                   value={formData.PackingRejection ?? ""}
                   onChange={handleChange}
                   style={styles.input}
-                  readOnly={mode === "print"}
+                  readOnly={mode === "print" || mode === "strike"}
                 />
               </td>
             </tr>
@@ -1308,7 +1352,7 @@ function AddForm() {
           <table style={{ ...styles.table, marginTop: "25px" }}>
             <thead>
               <tr>
-                <th style={{ ...styles.header, width: "25%" }}>Description</th>
+                <th style={{ ...styles.header, width: "20%" }}>Description</th>
                 <th style={{ ...styles.header, width: "25%" }}>Prepared By</th>
                 <th style={{ ...styles.header, width: "25%" }}>
                   Reviewed By (PD)
@@ -1322,7 +1366,7 @@ function AddForm() {
             <tbody>
               {/* Name Row */}
               <tr>
-                <td style={{ ...styles.cell, fontWeight: "bold" }}>Name</td>
+                <td style={{ ...styles.cell, textAlign:'center', fontWeight: "bold" }}>Name</td>
 
                 <td style={styles.cell}>
                   <input
@@ -1423,7 +1467,7 @@ function AddForm() {
 
               {/* Sign & Date Row */}
               <tr>
-                <td style={{ ...styles.cell, fontWeight: "bold" }}>
+                <td style={{ ...styles.cell, textAlign: "center", fontWeight: "bold" }}>
                   Sign & Date
                 </td>
 
@@ -1602,7 +1646,7 @@ function AddForm() {
               style={{
                 padding: "10px 20px",
                 fontSize: "16px",
-                backgroundColor: isAccepted ? "#4CAF50" : "#9E9E9E",
+                backgroundColor: isAccepted ? "#1E7F3F" : "#9E9E9E",
                 color: "white",
                 border: "none",
                 borderRadius: "5px",
@@ -1614,6 +1658,28 @@ function AddForm() {
             </button>
           )}
 
+          {mode === "strike" && (
+            <button
+              onClick={() => handleAdd(id)}
+              style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                backgroundColor: "#1E7F3F",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                marginRight: "12px",
+              }}
+            >
+              Strike
+            </button>
+
+
+          )}
+
+
+
           {batchStatus != "Approved" && mode === "edit" && (
             <button
               // onClick={handleSave("S")}
@@ -1621,7 +1687,7 @@ function AddForm() {
               style={{
                 padding: "10px 20px",
                 fontSize: "16px",
-                backgroundColor: "#4CAF50",
+                backgroundColor: "#1E7F3F",
                 color: "white",
                 border: "none",
                 borderRadius: "5px",
@@ -1635,11 +1701,11 @@ function AddForm() {
 
           <button
             //onClick={handleSave}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate(`/dashboard/sop-documents/${formData.SOPID || id}`)}
             style={{
               padding: "10px 20px",
               fontSize: "16px",
-              backgroundColor: "#d6693e",
+              backgroundColor: "#F5A000",
               color: "white",
               border: "none",
               borderRadius: "5px",

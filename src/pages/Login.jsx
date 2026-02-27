@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import GreenSignalLogo from "../images/Greensignal.png";
-
+import GreenSignalLogo from "../images/NewGS.png";
 function Login() {
   const navigate = useNavigate();
 
@@ -117,7 +116,7 @@ function Login() {
           <img
             src={GreenSignalLogo}
             alt="Company Logo"
-            style={{ width: "180px", height: "auto" }}
+            style={{ width: "200px", borderRadius: "10px", height: "auto" }}
           />
         </div>
 
@@ -229,7 +228,7 @@ const styles = {
 
   logo: {
     textAlign: "center",
-    marginBottom: "25px",
+    marginBottom: "5px",
   },
 
   label: {

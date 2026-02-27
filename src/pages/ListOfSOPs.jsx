@@ -10,8 +10,10 @@ function ListOfSOPs() {
 
   const navigate = useNavigate();
 
-  const handleView = (id) => {
-    navigate(`/dashboard/sop-documents/${id}`);
+  const handleView = (id, sopName) => {
+    navigate(`/dashboard/sop-documents/${id}`, {
+      state: { SopName: sopName },
+    });
   };
 
   useEffect(() => {
@@ -25,12 +27,13 @@ function ListOfSOPs() {
         console.log(parsedUser); // full object
         console.log(parsedUser.Data); // Data object
         console.log(parsedUser.Data.EMP_NAME); // specific value
+        let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND (FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_PREPAREDBY) OR FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_REVIEWEDBY) OR FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_APPROVEDBY))`;
 
         const payload = {
           Query: {
             AccessID: "TR337",
             ScreenName: "List Of SOPs",
-            Filter: `CompanyID=${parsedUser.Data.EMP_CMRECID}`,
+            Filter: Filter1,
             Any: "",
           },
         };
@@ -73,16 +76,6 @@ function ListOfSOPs() {
         }}
       >
         <h3>List of SOPs</h3>
-
-        {/* <FaPlus
-          title="Add Product"
-          style={{
-            cursor: "pointer",
-            color: "#2563eb",
-            fontSize: "20px",
-          }}
-          onClick={handleAdd}
-        /> */}
       </div>
       <table style={styles.table}>
         <thead>
@@ -119,7 +112,7 @@ function ListOfSOPs() {
                     }}
                     onClick={() => {
                       if (item.IsEnable === "Y") {
-                        handleView(item.RecordID);
+                        handleView(item.RecordID, item.Description);
                       }
                     }}
                   />
