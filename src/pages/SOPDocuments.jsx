@@ -20,27 +20,54 @@ function SOPDocuments() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  console.log("loction",location)
   const sopName = location.state?.SopName || "Documents";
   const SopId = location.state?.SopID || id;
   const documentName = location.state?.DocumentName || "Documents";
   const documentId = location.state?.DocumentID || id;
   const AnnexureNo = location.state?.AnnexureNo || null;
+  const LogNoteID = location.state?.LogNoteID || location.state?.DocumentIssuedID||null;
 
-
-  const handleEdit = (id, batchStatus, docid) => {
-    navigate(`/dashboard/add-form/${id}/edit`, {
-      state: { BatchStatus: batchStatus, DocumentIssuedID: docid },
+  const handleEdit = (id, batchStatus, docid,mode) => {
+    navigate(`/dashboard/add-form/${id}/${mode}`, {
+      state: {
+        BatchStatus: batchStatus,
+        DocumentIssuedID: docid,
+        SopID: SopId,
+        SopName: sopName,
+        DocumentName: documentName,
+        DocumentID: documentId,
+        AnnexureNo: AnnexureNo,
+      },
     });
   };
 
-  const handlePrint = (id, docid) => {
+  const handlePrint = (id,batchStatus, docid) => {
     navigate(`/dashboard/add-form/${id}/print`, {
-      state: { DocumentIssuedID: docid },
+      state: {
+        Batchtatus: batchStatus,
+        DocumentIssuedID: docid,
+        SopID: SopId,
+        SopName: sopName,
+        DocumentName: documentName,
+        documentId: documentId,
+        AnnexureNo: AnnexureNo,
+      },
     });
   };
 
-  const handleStrike = (id) => {
-    navigate(`/dashboard/add-form/${id}/strike`);
+  const handleStrike = (id,batchStatus, docid) => {
+    navigate(`/dashboard/add-form/${id}/strike`, {
+      state: {
+        BatchStatus: batchStatus,
+        DocumentIssuedID: docid,
+        SopID: SopId,
+        SopName: sopName,
+        DocumentName: documentName,
+        documentId: documentId,
+        AnnexureNo: AnnexureNo,
+      },
+    });
   };
 
   const handleAdd = () => {
@@ -269,7 +296,7 @@ function SOPDocuments() {
           }}
           onClick={handleAdd}
         /> */}
-        {/* <FaWpforms
+      {/* <FaWpforms
           //onClick={() => navigate('/dashboard/annexure-form-1')}
           onClick={() => navigate("/dashboard/form-list")}
           style={{
@@ -280,61 +307,75 @@ function SOPDocuments() {
           }}
         /> 
       </div> */}
-<div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    marginBottom: "10px",
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          marginBottom: "10px",
+        }}
+      >
+        <h3>
+          <span
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate(`/dashboard/list-of-sops`)}
+          >
+            List of SOPs
+          </span>
+        </h3>
+        <span>/</span>
+        <h3>
+          <span
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              navigate(`/dashboard/list-of-documents/${SopId}`, {
+                state: { Description: sopName },
+              })
+            }
+          >
+            {sopName}
+          </span>
+        </h3>
 
-                }}
-            >
-                <h3 >
-                    <span
-                        style={{ cursor: "pointer", }}
-                        onClick={() => navigate(`/dashboard/list-of-sops`)}
-                    >
-                        List of SOPs
-                    </span>
-                </h3>
-                <span>/</span>
-                <h3 >
-                    <span
-                        style={{ cursor: "pointer", }}
-                        onClick={() => navigate(`/dashboard/list-of-documents/${SopId}`,{state: { Description: sopName }})}
-                    >
-                        {sopName}
-                    </span>
-                </h3>
+        <span>/</span>
 
-                <span>/</span>
+        <h3>
+          <span
+            style={{ cursor: "pointer" }}
+            onClick={() =>
+              navigate(`/dashboard/list-of-log-notes/${LogNoteID}`, {
+                state: {
+                  SopName: sopName,
+                  SopID: SopId,
+                  DocumentName: documentName,
+                  DocumentID: documentId,
+                },
+              })
+            }
 
-                <h3 >
-                    <span
-                        style={{ cursor: "pointer", }}
-                     onClick={() =>  navigate(`/dashboard/list-of-log-notes/${id}`, {
-      state: {
-        SopName: sopName,
-        SopID: id,
-        DocumentName: documentName,
-        DocumentID: documentId,
-      },
-    })}
-                    >
-                        {documentName}
-                    </span>
-                </h3>
-                 <span>/</span>
+            //          navigate(`/dashboard/list-of-log-notes/${recordId}`, {
+            //   state: {
+            //     SopName: sopName,
+            //     SopID: id,
+            //     DocumentName: documentName,
+            //     DocumentID: recordId,
+            //   },
+            // });
+          >
+            {documentName}
+          </span>
+        </h3>
+        <span>/</span>
 
-                <h3 >
-                    <span
-                        style={{ cursor: "pointer", }}
-                    // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
-                    >
-                        {AnnexureNo}
-                    </span>
-                </h3>
-            </div>
+        <h3>
+          <span
+            style={{ cursor: "pointer" }}
+            // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
+          >
+            {AnnexureNo}
+          </span>
+        </h3>
+      </div>
       <table style={styles.table}>
         <thead>
           <tr>
@@ -454,6 +495,7 @@ function SOPDocuments() {
                                 item.RecordID,
                                 item.BatchStatus,
                                 item.DocumentIssuedID,
+                                "edit"
                               )
                           : undefined
                       }
@@ -472,7 +514,15 @@ function SOPDocuments() {
                       }}
                       onClick={
                         item.IsStrike === "N"
-                          ? () => handleStrike(item.RecordID)
+                          // ? () => handleStrike(item.RecordID)
+                          // : undefined
+                          ?() =>
+                              handleEdit(
+                                item.RecordID,
+                                item.BatchStatus,
+                                item.DocumentIssuedID,
+                                "strike"
+                              )
                           : undefined
                       }
                     />
@@ -496,7 +546,15 @@ function SOPDocuments() {
                       //     ? () => handlePrint(item.RecordID)
                       //     : undefined
                       // }
-                      onClick={() => handlePrint(item.RecordID)}
+                      // onClick={() => handlePrint(item.RecordID)}
+                      onClick={() =>
+                              handleEdit(
+                                item.RecordID,
+                                item.BatchStatus,
+                                item.DocumentIssuedID,
+                                "print"
+                              )
+                      }
                     />
                   </td>
                 </tr>

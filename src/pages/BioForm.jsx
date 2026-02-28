@@ -17,11 +17,15 @@ function AddForm() {
   const [isAccepted, setIsAccepted] = useState(false);
 
   const location = useLocation();
-  const { batchStatus } = location.state || {};
-
+  const batchStatus = location.state.batchStatus || null;
+  const sopName = location.state?.SopName || "Documents";
+  const SopId = location.state?.SopID || id;
+  const documentName = location.state?.DocumentName || "Documents";
+  const documentId = location.state?.DocumentID || id;
+  const AnnexureNo = location.state?.AnnexureNo || null;
+  const LogNoteID = location.state?.LogNoteID || null;
   console.log("BatchStatus received:", batchStatus);
 
-  
   const docID = location.state?.DocumentIssuedID;
 
   // const [searchParams] = useSearchParams();
@@ -573,7 +577,17 @@ function AddForm() {
       toast.success("Data saved successfully!");
 
       setTimeout(() => {
-        navigate(`/dashboard/sop-documents/${docID || id}`);
+        navigate(`/dashboard/sop-documents/${docID || id}`, {
+          state: {
+            BatchStatus: batchStatus,
+            DocumentIssuedID: LogNoteID,
+            SopID: SopId,
+            SopName: sopName,
+            DocumentName: documentName,
+            LogNoteID: documentId,
+            AnnexureNo: AnnexureNo,
+          },
+        });
       }, 1500);
       // navigate(`/dashboard/sop-documents/${id}`);
     } catch (error) {
@@ -620,7 +634,17 @@ function AddForm() {
         );
         if (response.data.Status === "Y") {
           Swal.fire("Success!", response.data.Msg, "success");
-          navigate(`/dashboard/add-form/${response.data.Recid}/edit`);
+          navigate(`/dashboard/add-form/${response.data.Recid}/edit`, {
+          state: {
+            BatchStatus: batchStatus,
+            DocumentIssuedID: LogNoteID,
+            SopID: SopId,
+            SopName: sopName,
+            DocumentName: documentName,
+            LogNoteID: documentId,
+            AnnexureNo: AnnexureNo,
+          },
+        });
           //navigate(`/dashboard/sop-documents/${formData.SOPID || id}`);
         } else {
           Swal.fire("Failed!", response.data.Msg, "error");
@@ -1783,7 +1807,19 @@ function AddForm() {
 
           <button
             //onClick={handleSave}
-            onClick={() => navigate(`/dashboard/sop-documents/${formData.DocumentIssuedID}`)}
+            onClick={() =>
+              navigate(`/dashboard/sop-documents/${formData.DocumentIssuedID}`, {
+          state: {
+            BatchStatus: batchStatus,
+            DocumentIssuedID: formData.DocumentIssuedID,
+            SopID: SopId,
+            SopName: sopName,
+            DocumentName: documentName,
+            LogNoteID: documentId,
+            AnnexureNo: AnnexureNo,
+          },
+        })
+            }
             style={{
               padding: "10px 20px",
               fontSize: "16px",
