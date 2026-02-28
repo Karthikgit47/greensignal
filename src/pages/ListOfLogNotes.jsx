@@ -20,11 +20,21 @@ function ListOfLogNotes() {
     const location = useLocation();
 
 
-    const handleSOPs = (recordId) => {
-        navigate(`/dashboard/sop-documents/${recordId}`);
+    const handleSOPs = (recordId, annexureNo) => {
+        // navigate(`/dashboard/sop-documents/${recordId}`);
+
+          navigate(`/dashboard/sop-documents/${recordId}`,{state: { SopName: sopName,
+        SopID: SopId,
+        DocumentName: documentName,
+        DocumentID: documentId,
+    AnnexureNo: annexureNo,}})
     }
 
-    const sopName = location.state?.DocumentName || "Documents";
+    const sopName = location.state?.SopName || "Documents";
+    const SopId= location.state?.SopID || id;
+    const documentName = location.state?.DocumentName || "Documents";
+    const documentId = location.state?.DocumentID || id;
+
 
 
     useEffect(() => {
@@ -96,6 +106,15 @@ function ListOfLogNotes() {
                         List of SOPs
                     </span>
                 </h3>
+                <span>/</span>
+                <h3 >
+                    <span
+                        style={{ cursor: "pointer", }}
+                        onClick={() => navigate(`/dashboard/list-of-documents/${SopId}`,{state: { Description: sopName }})}
+                    >
+                        {sopName}
+                    </span>
+                </h3>
 
                 <span>/</span>
 
@@ -104,7 +123,7 @@ function ListOfLogNotes() {
                         style={{ cursor: "pointer", }}
                     // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
                     >
-                        {sopName}
+                        {documentName}
                     </span>
                 </h3>
             </div>
@@ -146,7 +165,7 @@ function ListOfLogNotes() {
                                             opacity: 1,
                                         }}
                                         onClick={() => {
-                                            handleSOPs(item.RecordID);
+                                            handleSOPs(item.RecordID, item.AnnexureNo);
                                         }}
                                     />
                                 </td>

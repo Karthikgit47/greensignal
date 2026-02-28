@@ -1,7 +1,15 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { FaEdit, FaArrowRight, FaWpforms, FaTimesCircle, FaCopy, FaPrint, FaPlus } from "react-icons/fa";
+import { useLocation, useParams } from "react-router-dom";
+import {
+  FaEdit,
+  FaArrowRight,
+  FaWpforms,
+  FaTimesCircle,
+  FaCopy,
+  FaPrint,
+  FaPlus,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FaE } from "react-icons/fa6";
 
@@ -10,16 +18,22 @@ function SOPDocuments() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
 
-
   const navigate = useNavigate();
+  const location = useLocation();
+  const sopName = location.state?.SopName || "Documents";
+  const SopId = location.state?.SopID || id;
+  const documentName = location.state?.DocumentName || "Documents";
+  const documentId = location.state?.DocumentID || id;
+  const AnnexureNo = location.state?.AnnexureNo || null;
+
 
   const handleEdit = (id, batchStatus, docid) => {
     navigate(`/dashboard/add-form/${id}/edit`, {
-      state: { BatchStatus: batchStatus,  DocumentIssuedID: docid},
+      state: { BatchStatus: batchStatus, DocumentIssuedID: docid },
     });
   };
 
-  const handlePrint = (id,docid) => {
+  const handlePrint = (id, docid) => {
     navigate(`/dashboard/add-form/${id}/print`, {
       state: { DocumentIssuedID: docid },
     });
@@ -27,7 +41,7 @@ function SOPDocuments() {
 
   const handleStrike = (id) => {
     navigate(`/dashboard/add-form/${id}/strike`);
-  }
+  };
 
   const handleAdd = () => {
     navigate(`/dashboard/add-form/-1`);
@@ -55,8 +69,6 @@ function SOPDocuments() {
       setApprovedBy(parsedUser.Data.EMP_APPROVEDBY);
     }
   }, []);
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -170,7 +182,6 @@ function SOPDocuments() {
     fetchData();
   }, []);
 
-
   // For pagination
 
   //Pagination
@@ -221,7 +232,7 @@ function SOPDocuments() {
     <div style={{ padding: "4px" }}>
       <style>{spinnerKeyframes}</style>
       {/* Top Header Section */}
-      <div
+      {/* <div
         style={{
           display: "flex",
           //justifyContent: "space-between",
@@ -230,9 +241,9 @@ function SOPDocuments() {
           gap: "6px",
         }}
       >
-        <h3 >
+        <h3>
           <span
-            style={{ cursor: "pointer", }}
+            style={{ cursor: "pointer" }}
             onClick={() => navigate(`/dashboard/list-of-sops`)}
           >
             List of SOPs
@@ -240,10 +251,10 @@ function SOPDocuments() {
         </h3>
 
         <span>/</span>
-        <h3 >
+        <h3>
           <span
-            style={{ cursor: "pointer", }}
-          // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
+            style={{ cursor: "pointer" }}
+            // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
           >
             List of Log Notes
           </span>
@@ -267,9 +278,63 @@ function SOPDocuments() {
             color: "#007bff",
             marginRight: "30px"
           }}
-        /> */}
-      </div>
+        /> 
+      </div> */}
+<div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    marginBottom: "10px",
 
+                }}
+            >
+                <h3 >
+                    <span
+                        style={{ cursor: "pointer", }}
+                        onClick={() => navigate(`/dashboard/list-of-sops`)}
+                    >
+                        List of SOPs
+                    </span>
+                </h3>
+                <span>/</span>
+                <h3 >
+                    <span
+                        style={{ cursor: "pointer", }}
+                        onClick={() => navigate(`/dashboard/list-of-documents/${SopId}`,{state: { Description: sopName }})}
+                    >
+                        {sopName}
+                    </span>
+                </h3>
+
+                <span>/</span>
+
+                <h3 >
+                    <span
+                        style={{ cursor: "pointer", }}
+                     onClick={() =>  navigate(`/dashboard/list-of-log-notes/${id}`, {
+      state: {
+        SopName: sopName,
+        SopID: id,
+        DocumentName: documentName,
+        DocumentID: documentId,
+      },
+    })}
+                    >
+                        {documentName}
+                    </span>
+                </h3>
+                 <span>/</span>
+
+                <h3 >
+                    <span
+                        style={{ cursor: "pointer", }}
+                    // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
+                    >
+                        {AnnexureNo}
+                    </span>
+                </h3>
+            </div>
       <table style={styles.table}>
         <thead>
           <tr>
@@ -353,94 +418,97 @@ function SOPDocuments() {
                 <div style={spinnerStyle}></div>
               </td>
             </tr>
-          ) :
-            currentRows.length > 0 ? (
-              currentRows.map((item, index) => {
-                const canEdit =
-                  (PrepareBy === "Y" && item.BatchStatus === "Picked") ||
-                  (ReviewBY === "Y" && item.BatchStatus === "Prepared") ||
-                  (ApprovedBy === "Y" && item.BatchStatus === "Reviewed");
+          ) : currentRows.length > 0 ? (
+            currentRows.map((item, index) => {
+              const canEdit =
+                (PrepareBy === "Y" && item.BatchStatus === "Picked") ||
+                (ReviewBY === "Y" && item.BatchStatus === "Prepared") ||
+                (ApprovedBy === "Y" && item.BatchStatus === "Reviewed");
 
-                const canPrint = item.BatchStatus === "Approved";
+              const canPrint = item.BatchStatus === "Approved";
 
-                return (
-                  <tr key={item.RecordID || index}>
-                    <td style={styles.td}>{item.SLNO}</td>
-                    <td style={styles.td}>{item.BatchNo}</td>
-                    <td style={styles.td}>{item.NameoftheProduct}</td>
-                    <td style={styles.td}>{item.ManufacturingDate}</td>
-                    <td style={styles.td}>{item.ExpiryDate}</td>
-                    <td style={styles.td}>{item.BatchStatus}</td>
+              return (
+                <tr key={item.RecordID || index}>
+                  <td style={styles.td}>{item.SLNO}</td>
+                  <td style={styles.td}>{item.BatchNo}</td>
+                  <td style={styles.td}>{item.NameoftheProduct}</td>
+                  <td style={styles.td}>{item.ManufacturingDate}</td>
+                  <td style={styles.td}>{item.ExpiryDate}</td>
+                  <td style={styles.td}>{item.BatchStatus}</td>
 
-                    <td style={{ ...styles.td, textAlign: "center" }}>
+                  <td style={{ ...styles.td, textAlign: "center" }}>
+                    {/* ✅ EDIT */}
+                    <FaEdit
+                      title="Edit"
+                      style={{
+                        cursor: canEdit ? "pointer" : "not-allowed",
+                        color: canEdit ? "#3468d8" : "#ccc",
+                        fontSize: "18px",
+                        marginRight: "12px",
+                        pointerEvents: canEdit ? "auto" : "none",
+                      }}
+                      onClick={
+                        canEdit
+                          ? () =>
+                              handleEdit(
+                                item.RecordID,
+                                item.BatchStatus,
+                                item.DocumentIssuedID,
+                              )
+                          : undefined
+                      }
+                    />
 
-                      {/* ✅ EDIT */}
-                      <FaEdit
-                        title="Edit"
-                        style={{
-                          cursor: canEdit ? "pointer" : "not-allowed",
-                          color: canEdit ? "#3468d8" : "#ccc",
-                          fontSize: "18px",
-                          marginRight: "12px",
-                          pointerEvents: canEdit ? "auto" : "none"
-                        }}
-                        onClick={
-                          canEdit
-                            ? () => handleEdit(item.RecordID, item.BatchStatus, item.DocumentIssuedID)
-                            : undefined
-                        }
-                      />
+                    <FaTimesCircle
+                      title={
+                        item.IsStrike === "Y" ? "Already Striked" : "Strike"
+                      }
+                      style={{
+                        cursor:
+                          item.IsStrike === "N" ? "pointer" : "not-allowed",
+                        color: item.IsStrike === "N" ? "#7ca3f7" : "#ccc",
+                        fontSize: "18px",
+                        marginRight: "12px",
+                      }}
+                      onClick={
+                        item.IsStrike === "N"
+                          ? () => handleStrike(item.RecordID)
+                          : undefined
+                      }
+                    />
 
-                      <FaTimesCircle
-                        title={item.IsStrike === "Y" ? "Already Striked" : "Strike"}
-                        style={{
-                          cursor: item.IsStrike === "N" ? "pointer" : "not-allowed",
-                          color: item.IsStrike === "N" ? "#7ca3f7" : "#ccc",
-                          fontSize: "18px",
-                          marginRight: "12px",
-                        }}
-                        onClick={
-                          item.IsStrike === "N"
-                            ? () => handleStrike(item.RecordID)
-                            : undefined
-                        }
-                      />
-
-                      {/* ✅ PRINT */}
-                      < FaPrint
-                        title="Print"
-                        style={{
-                          // cursor: canPrint ? "pointer" : "not-allowed",
-                          // color: canPrint ? "#142a58" : "#ccc",
-                          cursor: "pointer",
-                          color: "#142a58",
-                          fontSize: "18px",
-                          //opacity: canPrint ? 1 : 0.5,
-                          //pointerEvents: canPrint ? "auto" : "none"
-                          opacity: 1,
-                          pointerEvents: "auto"
-                        }}
-                        // onClick={
-                        //   canPrint
-                        //     ? () => handlePrint(item.RecordID)
-                        //     : undefined
-                        // }
-                        onClick={
-                          () => handlePrint(item.RecordID)
-                        }
-                      />
-
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan="7" style={{ ...styles.td, textAlign: "center" }}>
-                  No Data Found
-                </td>
-              </tr>
-            )}
+                    {/* ✅ PRINT */}
+                    <FaPrint
+                      title="Print"
+                      style={{
+                        // cursor: canPrint ? "pointer" : "not-allowed",
+                        // color: canPrint ? "#142a58" : "#ccc",
+                        cursor: "pointer",
+                        color: "#142a58",
+                        fontSize: "18px",
+                        //opacity: canPrint ? 1 : 0.5,
+                        //pointerEvents: canPrint ? "auto" : "none"
+                        opacity: 1,
+                        pointerEvents: "auto",
+                      }}
+                      // onClick={
+                      //   canPrint
+                      //     ? () => handlePrint(item.RecordID)
+                      //     : undefined
+                      // }
+                      onClick={() => handlePrint(item.RecordID)}
+                    />
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan="7" style={{ ...styles.td, textAlign: "center" }}>
+                No Data Found
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
 
@@ -460,9 +528,7 @@ function SOPDocuments() {
           >
             {/* Previous Button */}
             <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.max(prev - 1, 1))
-              }
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
               style={{
                 padding: "6px 12px",
@@ -496,12 +562,8 @@ function SOPDocuments() {
                     minWidth: "35px",
                     height: "35px",
                     borderRadius: "6px",
-                    border: isActive
-                      ? "1px solid #003366"
-                      : "1px solid #ddd",
-                    backgroundColor: isActive
-                      ? "#003366"
-                      : "#ffffff",
+                    border: isActive ? "1px solid #003366" : "1px solid #ddd",
+                    backgroundColor: isActive ? "#003366" : "#ffffff",
                     color: isActive ? "#fff" : "#333",
                     fontWeight: isActive ? "bold" : "normal",
                     cursor: "pointer",
@@ -515,9 +577,7 @@ function SOPDocuments() {
             {/* Next Button */}
             <button
               onClick={() =>
-                setCurrentPage((prev) =>
-                  Math.min(prev + 1, totalPages)
-                )
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
               style={{
@@ -526,8 +586,7 @@ function SOPDocuments() {
                 border: "1px solid #ccc",
                 backgroundColor:
                   currentPage === totalPages ? "#f0f0f0" : "#ffffff",
-                cursor:
-                  currentPage === totalPages ? "not-allowed" : "pointer",
+                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
                 fontWeight: "500",
               }}
             >

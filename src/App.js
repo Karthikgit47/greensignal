@@ -34,12 +34,12 @@ function App() {
           <Route path="add-form/:id/:mode" element={<BioForm />} />
           <Route path="list-of-sops" element={<ListOfSOPs />} />
           <Route path="sop-documents/:id" element={<SOPDocuments />} />
-          <Route path="annexure-form-1" element={<AnnexureForm1 />} />
-          <Route path="annexure-form-2" element={<AnnexureForm2 />} />
-          <Route path="annexure-form-3" element={<AnnexureForm3 />} />
-          <Route path="annexure-form-4" element={<AnnexureForm4 />} />
-          <Route path="annexure5" element={<Annexure5 />} />
-          <Route path="annexure6" element={<Annexure6 />} />
+          <Route path="annexure-1" element={<AnnexureForm1 />} />
+          <Route path="annexure-2" element={<AnnexureForm2 />} />
+          <Route path="annexure-3" element={<AnnexureForm3 />} />
+          <Route path="annexure-4" element={<AnnexureForm4 />} />
+          <Route path="annexure-5" element={<Annexure5 />} />
+          <Route path="annexure-6" element={<Annexure6 />} />
           <Route path="form-list" element={<FormList />} />
           <Route path="list-of-documents/:id" element={<ListOfDocuments />} />
           <Route path="list-of-log-notes/:id" element={<ListOfLogNotes />} />
