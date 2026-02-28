@@ -56,10 +56,6 @@ function SOPDocuments() {
 
 
 
-  //Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -172,6 +168,13 @@ function SOPDocuments() {
     fetchData();
   }, []);
 
+
+  // For pagination
+
+    //Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+  
   const totalPages = Math.ceil(data.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -179,6 +182,37 @@ function SOPDocuments() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5; // how many numbers visible in middle
+
+    let start = Math.max(currentPage - 2, 1);
+    let end = Math.min(start + maxVisible - 1, totalPages);
+
+    if (end - start < maxVisible - 1) {
+      start = Math.max(end - maxVisible + 1, 1);
+    }
+
+    // Show first page
+    if (start > 1) {
+      pages.push(1);
+      if (start > 2) pages.push("...");
+    }
+
+    // Middle pages
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    // Show last page
+    if (end < totalPages) {
+      if (end < totalPages - 1) pages.push("...");
+      pages.push(totalPages);
+    }
+
+    return pages;
   };
 
   return (
@@ -206,7 +240,7 @@ function SOPDocuments() {
         /> */}
         {/* <FaWpforms
           //onClick={() => navigate('/dashboard/annexure-form-1')}
-           onClick={() => navigate("/dashboard/form-list")}
+          onClick={() => navigate("/dashboard/form-list")}
           style={{
             cursor: "pointer",
             fontSize: "20px",
@@ -390,6 +424,8 @@ function SOPDocuments() {
         </tbody>
       </table>
 
+      {/* For pagination */}
+
       {data.length > 0 && (
         <>
           <div
@@ -421,14 +457,21 @@ function SOPDocuments() {
             </button>
 
             {/* Page Numbers */}
-            {[...Array(totalPages)].map((_, index) => {
-              const pageNumber = index + 1;
-              const isActive = currentPage === pageNumber;
+            {getPageNumbers().map((page, index) => {
+              if (page === "...") {
+                return (
+                  <span key={index} style={{ padding: "0 8px" }}>
+                    ...
+                  </span>
+                );
+              }
+
+              const isActive = currentPage === page;
 
               return (
                 <button
                   key={index}
-                  onClick={() => handlePageChange(pageNumber)}
+                  onClick={() => handlePageChange(page)}
                   style={{
                     minWidth: "35px",
                     height: "35px",
@@ -442,10 +485,9 @@ function SOPDocuments() {
                     color: isActive ? "#fff" : "#333",
                     fontWeight: isActive ? "bold" : "normal",
                     cursor: "pointer",
-                    transition: "0.2s ease",
                   }}
                 >
-                  {pageNumber}
+                  {page}
                 </button>
               );
             })}
