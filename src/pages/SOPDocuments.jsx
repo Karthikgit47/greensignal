@@ -205,7 +205,8 @@ function SOPDocuments() {
           onClick={handleAdd}
         /> */}
         <FaWpforms
-          onClick={() => navigate('/dashboard/annexure-form-1')}
+          //onClick={() => navigate('/dashboard/annexure-form-1')}
+           onClick={() => navigate("/dashboard/form-list")}
           style={{
             cursor: "pointer",
             fontSize: "20px",

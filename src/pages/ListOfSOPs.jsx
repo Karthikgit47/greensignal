@@ -77,7 +77,20 @@ function ListOfSOPs() {
       >
         <h3>List of SOPs</h3>
 
-       
+        {/* <button
+          style={{
+            width: "78px",
+            height: "48px",
+            background: "#2563eb",  
+            color: "#fff",
+            fontSize: "26px",
+            border: "none",
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/dashboard/form-list")}
+        >
+         Forms
+        </button> */}
       </div>
       <table style={styles.table}>
         <thead>

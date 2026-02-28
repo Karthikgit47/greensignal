@@ -12,6 +12,7 @@ import AnnexureForm4 from "./pages/AnnexureForm4";
 
 import Annexure6 from "./pages/Annexure6";
 import Annexure5 from "./pages/Annexure5";
+import FormList from "./pages/FormList";
 // "homepage": "https://karthikgit47.github.io/greensignal",
 
 function App() {
@@ -35,9 +36,9 @@ function App() {
           <Route path="annexure-form-2" element={<AnnexureForm2 />} />
           <Route path="annexure-form-3" element={<AnnexureForm3 />} />
           <Route path="annexure-form-4" element={<AnnexureForm4 />} />
-          
           <Route path="annexure5" element={<Annexure5 />} />
           <Route path="annexure6" element={<Annexure6 />} />
+          <Route path="form-list" element={<FormList />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" />} />
