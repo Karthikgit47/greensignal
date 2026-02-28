@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import Strikeimg from "../images/strikeimg1.jpg";
 
 function AddForm() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -631,6 +632,8 @@ function AddForm() {
     }
   };
 
+  const isStriked = formData.BatchStatus === "Striked";
+
   return (
     <div style={styles.wrapper}>
       <ToastContainer
@@ -641,6 +644,47 @@ function AddForm() {
         pauseOnHover
         theme="colored"
       />
+
+      {/* Background images */}
+      {mode === "print" && (
+        <div
+          style={{
+            position: "relative",
+            minHeight: "100vh",
+          }}
+        >
+          {/* FULL PAGE WATERMARK */}
+          {isStriked && (
+            <div
+              style={{
+                position: "fixed",      
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                backgroundImage: `url(${Strikeimg})`,
+                backgroundRepeat: "no-repeat",
+                backgroundPosition: "center",
+                backgroundSize: "60%",
+                opacity: 0.08,
+                zIndex: 0,
+                pointerEvents: "none",
+              }}
+            />
+          )}
+
+          {/* FORM CONTENT */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 1,
+            }}
+          >
+            {/* Your Entire Form JSX Here */}
+          </div>
+        </div>
+      )}
+
       <div style={styles.container}>
         {/* Top Table */}
         <table style={{ ...styles.table, marginBottom: "20px" }}>
