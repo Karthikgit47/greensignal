@@ -412,7 +412,7 @@ function AddForm() {
     let approvedDate = formData.ApprovdDate;
     let preparedDate = formData.PreparedDate;
 
-    if (formData.BatchStatus == "Yet to be Picked") {
+    if (formData.BatchStatus == "Picked") {
       preparedById = UserID;
     }
     if (formData.BatchStatus == "Prepared") {
@@ -422,7 +422,7 @@ function AddForm() {
       approvedById = UserID;
     }
     if (action == "P") {
-      if (formData.BatchStatus == "Yet to be Picked") {
+      if (formData.BatchStatus == "Picked") {
         preparedById = UserID;
         batchStatus = "Prepared";
         preparedDate = formatted;
@@ -579,6 +579,16 @@ function AddForm() {
 
 
   const handleAdd = async (id) => {
+
+    if (!formData.StrikeComments?.trim()) {
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Strike Comments is required",
+      });
+      return; // stop here
+    }
+
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to Strike this record?",
@@ -594,7 +604,9 @@ function AddForm() {
 
         const response = await axios.post("https://bosuat.beyondexs.com/api/Strikesop.php", {
           "RecordID": id,
-          "CompanyID": "76"
+          "CompanyID": "76",
+          "StrikeComments": formData.StrikeComments,
+
         },
           {
             headers: {
@@ -604,7 +616,7 @@ function AddForm() {
           }
         );
         if (response.data.Status === "Y") {
-          
+
           Swal.fire("Success!", response.data.Msg, "success");
           navigate(`/dashboard/add-form/${response.data.Recid}/edit`);
           //navigate(`/dashboard/sop-documents/${formData.SOPID || id}`);
@@ -1366,7 +1378,7 @@ function AddForm() {
             <tbody>
               {/* Name Row */}
               <tr>
-                <td style={{ ...styles.cell, textAlign:'center', fontWeight: "bold" }}>Name</td>
+                <td style={{ ...styles.cell, textAlign: 'center', fontWeight: "bold" }}>Name</td>
 
                 <td style={styles.cell}>
                   <input
@@ -1659,6 +1671,42 @@ function AddForm() {
           )}
 
           {mode === "strike" && (
+            <div
+              style={{
+                borderRadius: "10px",
+                width: "100%",
+                textAlign: "right",
+              }}
+            >
+              <label
+                style={{
+                  fontWeight: "bold",
+                  color: "#003366",
+                  display: "block",
+                  textAlign: "left",
+                  marginBottom: "5px"
+                }}
+              >
+                Strike Comment
+              </label>
+
+              <textarea
+                name="StrikeComments"
+                value={formData.StrikeComments || ""}
+                placeholder="Enter your Strike Comment"
+                onChange={handleChange}
+                style={{
+                  ...styles.textarea,
+                  width: "100%",
+                  height: "100px",
+                  resize: "none",
+                }}
+              />
+            </div>
+          )}
+
+
+          {mode === "strike" && (
             <button
               onClick={() => handleAdd(id)}
               style={{
@@ -1695,7 +1743,7 @@ function AddForm() {
                 marginRight: "12px",
               }}
             >
-              {formData.BatchStatus == "Yet to be Picked" ? "Save" : "Query"}
+              {formData.BatchStatus == "Picked" ? "Save" : "Query"}
             </button>
           )}
 

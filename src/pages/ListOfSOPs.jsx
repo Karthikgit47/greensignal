@@ -76,6 +76,8 @@ function ListOfSOPs() {
         }}
       >
         <h3>List of SOPs</h3>
+
+       
       </div>
       <table style={styles.table}>
         <thead>

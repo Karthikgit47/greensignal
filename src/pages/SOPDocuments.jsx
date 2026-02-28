@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { FaEdit, FaArrowRight, FaTimesCircle,  FaCopy, FaPrint, FaPlus } from "react-icons/fa";
+import { FaEdit, FaArrowRight, FaWpforms, FaTimesCircle, FaCopy, FaPrint, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { FaE } from "react-icons/fa6";
 
@@ -53,6 +53,13 @@ function SOPDocuments() {
       setApprovedBy(parsedUser.Data.EMP_APPROVEDBY);
     }
   }, []);
+
+
+
+  //Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -76,7 +83,7 @@ function SOPDocuments() {
         let statuses = [];
 
         if (PrepareBy === "Y") {
-          statuses.push("'Yet to be Picked','Prepared'");
+          statuses.push("'Picked','Prepared'");
         }
 
         if (ReviewBY === "Y") {
@@ -165,6 +172,15 @@ function SOPDocuments() {
     fetchData();
   }, []);
 
+  const totalPages = Math.ceil(data.length / rowsPerPage);
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div style={{ padding: "4px" }}>
       <style>{spinnerKeyframes}</style>
@@ -188,6 +204,15 @@ function SOPDocuments() {
           }}
           onClick={handleAdd}
         /> */}
+        <FaWpforms
+          onClick={() => navigate('/dashboard/annexure-form-1')}
+          style={{
+            cursor: "pointer",
+            fontSize: "20px",
+            color: "#007bff",
+            marginRight: "30px"
+          }}
+        />
       </div>
 
       <table style={styles.table}>
@@ -274,10 +299,10 @@ function SOPDocuments() {
               </td>
             </tr>
           ) :
-            data.length > 0 ? (
-              data.map((item, index) => {
+            currentRows.length > 0 ? (
+              currentRows.map((item, index) => {
                 const canEdit =
-                  (PrepareBy === "Y" && item.BatchStatus === "Yet to be Picked") ||
+                  (PrepareBy === "Y" && item.BatchStatus === "Picked") ||
                   (ReviewBY === "Y" && item.BatchStatus === "Prepared") ||
                   (ApprovedBy === "Y" && item.BatchStatus === "Reviewed");
 
@@ -311,7 +336,7 @@ function SOPDocuments() {
                         }
                       />
 
-                      <FaTimesCircle 
+                      <FaTimesCircle
                         title={item.IsStrike === "Y" ? "Already Striked" : "Strike"}
                         style={{
                           cursor: item.IsStrike === "N" ? "pointer" : "not-allowed",
@@ -363,6 +388,105 @@ function SOPDocuments() {
             )}
         </tbody>
       </table>
+
+      {data.length > 0 && (
+        <>
+          <div
+            style={{
+              marginTop: "20px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "6px",
+              flexWrap: "wrap",
+            }}
+          >
+            {/* Previous Button */}
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.max(prev - 1, 1))
+              }
+              disabled={currentPage === 1}
+              style={{
+                padding: "6px 12px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+                backgroundColor: currentPage === 1 ? "#f0f0f0" : "#ffffff",
+                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                fontWeight: "500",
+              }}
+            >
+              ◀
+            </button>
+
+            {/* Page Numbers */}
+            {[...Array(totalPages)].map((_, index) => {
+              const pageNumber = index + 1;
+              const isActive = currentPage === pageNumber;
+
+              return (
+                <button
+                  key={index}
+                  onClick={() => handlePageChange(pageNumber)}
+                  style={{
+                    minWidth: "35px",
+                    height: "35px",
+                    borderRadius: "6px",
+                    border: isActive
+                      ? "1px solid #003366"
+                      : "1px solid #ddd",
+                    backgroundColor: isActive
+                      ? "#003366"
+                      : "#ffffff",
+                    color: isActive ? "#fff" : "#333",
+                    fontWeight: isActive ? "bold" : "normal",
+                    cursor: "pointer",
+                    transition: "0.2s ease",
+                  }}
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
+
+            {/* Next Button */}
+            <button
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  Math.min(prev + 1, totalPages)
+                )
+              }
+              disabled={currentPage === totalPages}
+              style={{
+                padding: "6px 12px",
+                borderRadius: "6px",
+                border: "1px solid #ccc",
+                backgroundColor:
+                  currentPage === totalPages ? "#f0f0f0" : "#ffffff",
+                cursor:
+                  currentPage === totalPages ? "not-allowed" : "pointer",
+                fontWeight: "500",
+              }}
+            >
+              ▶
+            </button>
+          </div>
+
+          {/* Record Info */}
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "10px",
+              fontSize: "13px",
+              color: "#555",
+            }}
+          >
+            Showing <b>{indexOfFirstRow + 1}</b> –
+            <b>{Math.min(indexOfLastRow, data.length)}</b> of{" "}
+            <b>{data.length}</b> records
+          </div>
+        </>
+      )}
     </div>
   );
 }
