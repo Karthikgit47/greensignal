@@ -578,9 +578,7 @@ function AddForm() {
     }
   };
 
-
   const handleAdd = async (id) => {
-
     if (!formData.StrikeComments?.trim()) {
       Swal.fire({
         icon: "error",
@@ -602,22 +600,21 @@ function AddForm() {
 
     if (result.isConfirmed) {
       try {
-
-        const response = await axios.post("https://bosuat.beyondexs.com/api/Strikesop.php", {
-          "RecordID": id,
-          "CompanyID": "76",
-          "StrikeComments": formData.StrikeComments,
-
-        },
+        const response = await axios.post(
+          "https://bosuat.beyondexs.com/api/Strikesop.php",
+          {
+            RecordID: id,
+            CompanyID: "76",
+            StrikeComments: formData.StrikeComments,
+          },
           {
             headers: {
               Authorization: `eyJhbGciOiJIUzI1NiIsInR5cGUiOiJKV1QifQ.eyJzdWIiOiJCZXhAMTIzIiwibmFtZSI6IkJleCIsImFkbWluIjp0cnVlLCJleHAiOjE2Njk4ODA2MTV9.uVL-s9M7nOPBH01dT1bpQbu0xbwXK4JT7HQo8h87t50`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
         if (response.data.Status === "Y") {
-
           Swal.fire("Success!", response.data.Msg, "success");
           navigate(`/dashboard/add-form/${response.data.Recid}/edit`);
           //navigate(`/dashboard/sop-documents/${formData.SOPID || id}`);
@@ -625,7 +622,6 @@ function AddForm() {
           Swal.fire("Failed!", response.data.Msg, "error");
         }
         // Swal.fire("Success!", "Record added successfully.", "success");
-
       } catch (error) {
         Swal.fire("Error!", "Something went wrong.", "error");
       }
@@ -645,47 +641,28 @@ function AddForm() {
         theme="colored"
       />
 
-      {/* Background images */}
-      {mode === "print" && (
-        <div
-          style={{
-            position: "relative",
-            minHeight: "100vh",
-          }}
-        >
-          {/* FULL PAGE WATERMARK */}
-          {isStriked && (
-            <div
-              style={{
-                position: "fixed",      
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                backgroundImage: `url(${Strikeimg})`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                backgroundSize: "60%",
-                opacity: 0.08,
-                zIndex: 0,
-                pointerEvents: "none",
-              }}
-            />
-          )}
-
-          {/* FORM CONTENT */}
+      <div style={{ ...styles.container, position: "relative" }}>
+        {/* CENTER STRIKE IMAGE */}
+        {isStriked && (
           <div
             style={{
-              position: "relative",
-              zIndex: 1,
+              position: "absolute",
+              top: "40%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "80%",
+              height: "100%",
+              backgroundImage: `url(${Strikeimg})`,
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+              backgroundSize: "contain",
+              opacity: 0.25,
+              zIndex: 0,
+              pointerEvents: "none",
             }}
-          >
-            {/* Your Entire Form JSX Here */}
-          </div>
-        </div>
-      )}
+          />
+        )}
 
-      <div style={styles.container}>
         {/* Top Table */}
         <table style={{ ...styles.table, marginBottom: "20px" }}>
           <tbody>
@@ -1422,7 +1399,15 @@ function AddForm() {
             <tbody>
               {/* Name Row */}
               <tr>
-                <td style={{ ...styles.cell, textAlign: 'center', fontWeight: "bold" }}>Name</td>
+                <td
+                  style={{
+                    ...styles.cell,
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Name
+                </td>
 
                 <td style={styles.cell}>
                   <input
@@ -1523,7 +1508,13 @@ function AddForm() {
 
               {/* Sign & Date Row */}
               <tr>
-                <td style={{ ...styles.cell, textAlign: "center", fontWeight: "bold" }}>
+                <td
+                  style={{
+                    ...styles.cell,
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
                   Sign & Date
                 </td>
 
@@ -1728,7 +1719,7 @@ function AddForm() {
                   color: "#003366",
                   display: "block",
                   textAlign: "left",
-                  marginBottom: "5px"
+                  marginBottom: "5px",
                 }}
               >
                 Strike Comment
@@ -1749,7 +1740,6 @@ function AddForm() {
             </div>
           )}
 
-
           {mode === "strike" && (
             <button
               onClick={() => handleAdd(id)}
@@ -1766,11 +1756,7 @@ function AddForm() {
             >
               Strike
             </button>
-
-
           )}
-
-
 
           {batchStatus != "Approved" && mode === "edit" && (
             <button
@@ -1793,7 +1779,9 @@ function AddForm() {
 
           <button
             //onClick={handleSave}
-            onClick={() => navigate(`/dashboard/sop-documents/${formData.SOPID || id}`)}
+            onClick={() =>
+              navigate(`/dashboard/sop-documents/${formData.SOPID || id}`)
+            }
             style={{
               padding: "10px 20px",
               fontSize: "16px",
