@@ -204,7 +204,7 @@ function SOPDocuments() {
           }}
           onClick={handleAdd}
         /> */}
-        <FaWpforms
+        {/* <FaWpforms
           //onClick={() => navigate('/dashboard/annexure-form-1')}
            onClick={() => navigate("/dashboard/form-list")}
           style={{
@@ -213,7 +213,7 @@ function SOPDocuments() {
             color: "#007bff",
             marginRight: "30px"
           }}
-        />
+        /> */}
       </div>
 
       <table style={styles.table}>

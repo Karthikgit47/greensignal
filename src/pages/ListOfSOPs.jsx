@@ -129,6 +129,9 @@ function ListOfSOPs() {
                       if (item.IsEnable === "Y") {
                         handleView(item.RecordID, item.Description);
                       }
+                      if (item.IsEnable === "Y" && item.Description === "DISTRIBUTION AND CONTROL OF DOCUMENTS") {
+                        navigate("/dashboard/form-list");
+                      }
                     }}
                   />
                 </td>
