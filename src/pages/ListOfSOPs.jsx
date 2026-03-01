@@ -10,11 +10,19 @@ function ListOfSOPs() {
 
   const navigate = useNavigate();
 
-  const handleView = (id, sopName) => {
-    navigate(`/dashboard/sop-documents/${id}`, {
-      state: { SopName: sopName },
+  // const handleView = (id, sopName) => {
+  //   navigate(`/dashboard/sop-documents/${id}`, {
+  //     state: { SopName: sopName },
+  //   });
+  // };
+
+   const handleView = (id, sopName) => {
+    navigate(`/dashboard/list-of-documents/${id}`,{
+      state: { Description: sopName },
     });
   };
+
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -126,12 +134,14 @@ function ListOfSOPs() {
                       opacity: item.IsEnable === "Y" ? 1 : 0.5,
                     }}
                     onClick={() => {
-                      if (item.IsEnable === "Y") {
-                        handleView(item.RecordID, item.Description);
-                      }
-                      if (item.IsEnable === "Y" && item.Description === "DISTRIBUTION AND CONTROL OF DOCUMENTS") {
-                        navigate("/dashboard/form-list");
-                      }
+                    
+                      handleView(item.RecordID, item.Description);
+                      // if (item.IsEnable === "Y") {
+                      //   handleView(item.RecordID, item.Description);
+                      // }
+                      // if (item.IsEnable === "Y" && item.Description === "DISTRIBUTION AND CONTROL OF DOCUMENTS") {
+                      //   navigate("/dashboard/form-list");
+                      // }
                     }}
                   />
                 </td>

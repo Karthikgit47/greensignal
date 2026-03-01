@@ -21,6 +21,9 @@ function AddForm() {
 
   console.log("BatchStatus received:", batchStatus);
 
+  
+  const docID = location.state?.DocumentIssuedID;
+
   // const [searchParams] = useSearchParams();
 
   //  const mode = searchParams.get("mode") || "edit";
@@ -80,6 +83,7 @@ function AddForm() {
     ApprovdDate: "",
     ReviewComments: "",
     ApprovedComments: "",
+    DocumentIssuedID: "",
   });
   useEffect(() => {
     const A = Number(formData.NumberofVials || 0);
@@ -569,7 +573,7 @@ function AddForm() {
       toast.success("Data saved successfully!");
 
       setTimeout(() => {
-        navigate(`/dashboard/sop-documents/${formData.SOPID || id}`);
+        navigate(`/dashboard/sop-documents/${docID || id}`);
       }, 1500);
       // navigate(`/dashboard/sop-documents/${id}`);
     } catch (error) {
@@ -1793,7 +1797,7 @@ function AddForm() {
 
           <button
             //onClick={handleSave}
-            onClick={() => navigate(`/dashboard/sop-documents/${formData.SOPID || id}`)}
+            onClick={() => navigate(`/dashboard/sop-documents/${formData.DocumentIssuedID}`)}
             style={{
               padding: "10px 20px",
               fontSize: "16px",

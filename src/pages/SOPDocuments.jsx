@@ -13,14 +13,16 @@ function SOPDocuments() {
 
   const navigate = useNavigate();
 
-  const handleEdit = (id, batchStatus) => {
+  const handleEdit = (id, batchStatus, docid) => {
     navigate(`/dashboard/add-form/${id}/edit`, {
-      state: { batchStatus: batchStatus },
+      state: { BatchStatus: batchStatus,  DocumentIssuedID: docid},
     });
   };
 
-  const handlePrint = (id) => {
-    navigate(`/dashboard/add-form/${id}/print`);
+  const handlePrint = (id,docid) => {
+    navigate(`/dashboard/add-form/${id}/print`, {
+      state: { DocumentIssuedID: docid },
+    });
   };
 
   const handleStrike = (id) => {
@@ -73,7 +75,7 @@ function SOPDocuments() {
         console.log(parsedUser.Data.EMP_NAME); // specific value
         console.log("Fetching and User:", storedUser);
         // let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND SOPID=${id}`;
-        let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID}`;
+        let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND DocumentIssuedID =${id}`;
 
         let Filter = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND (Preparedby =${parsedUser.Data.EMP_RECID} OR Approvdby =${parsedUser.Data.EMP_RECID} OR ReviewedBy=${parsedUser.Data.EMP_RECID})`;
         let statuses = [];
@@ -171,10 +173,10 @@ function SOPDocuments() {
 
   // For pagination
 
-    //Pagination
+  //Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
-  
+
   const totalPages = Math.ceil(data.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -222,12 +224,30 @@ function SOPDocuments() {
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
+          //justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "10px",
+          gap: "6px",
         }}
       >
-        <h3>List of SOPs</h3>
+        <h3 >
+          <span
+            style={{ cursor: "pointer", }}
+            onClick={() => navigate(`/dashboard/list-of-sops`)}
+          >
+            List of SOPs
+          </span>
+        </h3>
+
+        <span>/</span>
+        <h3 >
+          <span
+            style={{ cursor: "pointer", }}
+          // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
+          >
+            List of Log Notes
+          </span>
+        </h3>
 
         {/* <FaPlus
           title="Add Product"
@@ -366,7 +386,7 @@ function SOPDocuments() {
                         }}
                         onClick={
                           canEdit
-                            ? () => handleEdit(item.RecordID, item.BatchStatus)
+                            ? () => handleEdit(item.RecordID, item.BatchStatus, item.DocumentIssuedID)
                             : undefined
                         }
                       />
