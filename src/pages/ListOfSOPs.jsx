@@ -35,7 +35,8 @@ function ListOfSOPs() {
         console.log(parsedUser); // full object
         console.log(parsedUser.Data); // Data object
         console.log(parsedUser.Data.EMP_NAME); // specific value
-        let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND (FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_PREPAREDBY) OR FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_REVIEWEDBY) OR FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_APPROVEDBY))`;
+        // let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND (FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_PREPAREDBY) OR FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_REVIEWEDBY) OR FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_APPROVEDBY))`;
+        let Filter1 = `CompanyID=${parsedUser.Data.EMP_CMRECID} AND (FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_PREPAREDBY) OR FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_REVIEWEDBY) OR FIND_IN_SET ('${parsedUser.Data.EMP_RECID}', SOP_APPROVEDBY)) AND RecordID IN (SELECT ESM_SOPRECID FROM  empsopmapping WHERE ESM_EMPRECID = ${parsedUser.Data.EMP_RECID})`;
 
         const payload = {
           Query: {
