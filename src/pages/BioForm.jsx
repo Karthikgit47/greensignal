@@ -41,6 +41,7 @@ function AddForm() {
   const [selectedpreparedBysign, setselectedpreparedBysign] = useState(null);
   const [selectedreviewedBysign, setselectedreviewedBysgn] = useState(null);
   const [selectedapprovedBySign, setselectedapprovedBySign] = useState(null);
+  const [selectedStrikedSign, setselectedStrikedSign] = useState(null);
 
   const [formData, setFormData] = useState({
     NameoftheProduct: "",
@@ -88,6 +89,8 @@ function AddForm() {
     ReviewComments: "",
     ApprovedComments: "",
     DocumentIssuedID: "",
+    StrikedName: "",
+    StrikedDate: "",
   });
   useEffect(() => {
     const A = Number(formData.NumberofVials || 0);
@@ -187,6 +190,7 @@ function AddForm() {
           setselectedpreparedBy(response.data?.Data.PreparedBy);
           setselectedreviewedBy(response.data?.Data.ReviewedBy);
           setselectedapprovedBy(response.data?.Data.ApprovdBy);
+          setselectedStrikedSign(response.data?.Data.StrikedBy);
           setFormData((prev) => ({
             ...prev,
             ...response.data.Data,
@@ -207,6 +211,9 @@ function AddForm() {
 
           setselectedapprovedBySign(
             data.ApprovdSign1 ? BASE_URL + data.ApprovdSign1 : "",
+          );
+          setselectedStrikedSign(
+            data.StrikedSign1 ? BASE_URL + data.StrikedSign1 : "",
           );
         }
       } catch (error) {
@@ -269,6 +276,25 @@ function AddForm() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
+   const now = new Date();
+    // const formatted = now.toISOString().slice(0, 19).replace("T", " ");
+    const Strikedate = now
+      .toLocaleString("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      })
+      .replace(",", "");
+    console.log(Strikedate);
+
+    formData.StrikedDate = Strikedate;
 
   const styles = {
     wrapper: {
@@ -400,6 +426,12 @@ function AddForm() {
       })
       .replace(",", "");
     console.log(formatted);
+
+    formData.StrikedDate = formatted;
+
+    console.log("Current Time", formData.StrikedDate);
+    
+
     // const storedUser = sessionStorage.getItem("username");
     // console.log("Fetching and User:", storedUser);
     const storedEMp = sessionStorage.getItem("EmpData");
@@ -597,6 +629,10 @@ function AddForm() {
   };
 
   const handleAdd = async (id) => {
+
+    const storedEMp = sessionStorage.getItem("EmpData");
+    const parsedUser = JSON.parse(storedEMp);
+
     if (!formData.StrikeComments?.trim()) {
       Swal.fire({
         icon: "error",
@@ -624,6 +660,7 @@ function AddForm() {
             RecordID: id,
             CompanyID: "76",
             StrikeComments: formData.StrikeComments,
+            Strikeid: parsedUser.Data.EMP_RECID,
           },
           {
             headers: {
@@ -1421,6 +1458,10 @@ function AddForm() {
                 <th style={{ ...styles.header, width: "25%" }}>
                   Approved By (QA)
                 </th>
+                { isStriked && (
+                 <th style={{ ...styles.header, width: "25%" }}>
+                  Striked By
+                </th>)}
               </tr>
             </thead>
 
@@ -1532,6 +1573,19 @@ function AddForm() {
                     }}
                   /> */}
                 </td>
+
+              { isStriked && (
+                  <td style={styles.cell}>
+                  <input
+                    type="text"
+                    name="StrikedName"
+                    value={formData.StrikedName || ""}
+                    onChange={handleChange}
+                    style={styles.inputtext}
+                    readOnly={mode === "print"}
+                  />
+                
+                </td>)}
               </tr>
 
               {/* Sign & Date Row */}
@@ -1691,6 +1745,29 @@ function AddForm() {
                     readOnly
                   />
                 </td> */}
+
+          { isStriked && (
+                <td style={styles.cell}>
+                  <div style={styles.signatureBox}>
+                    {selectedStrikedSign ? (
+                      <img
+                        src={selectedStrikedSign}
+                        alt="Striked Sign"
+                        style={styles.signatureImg}
+                      />
+                    ) : (
+                      <div style={styles.digitalText}>
+                        {formData.StrikedDate
+                          ? "Digitally Signed"
+                          : "Not Signed"}
+                      </div>
+                    )}
+
+                    <div style={styles.signatureDate}>
+                      {formatDateTime(formData.StrikedDate) || ""}
+                    </div>
+                  </div>
+                </td>)}
               </tr>
             </tbody>
           </table>
@@ -1768,6 +1845,42 @@ function AddForm() {
             </div>
           )}
 
+
+           {isStriked && mode === "print" &&  (
+            <div
+              style={{
+                borderRadius: "10px",
+                width: "100%",
+                textAlign: "right",
+              }}
+            >
+              <label
+                style={{
+                  fontWeight: "bold",
+                  color: "#003366",
+                  display: "block",
+                  textAlign: "left",
+                  marginBottom: "5px",
+                }}
+              >
+                Striked Comment
+              </label>
+
+              <textarea
+                name="StrikeComments"
+                value={formData.StrikeComments || ""}
+                disabled
+                onChange={handleChange}
+                style={{
+                  ...styles.textarea,
+                  width: "100%",
+                  height: "100px",
+                  resize: "none",
+                }}
+              />
+            </div>
+          )}
+
           {mode === "strike" && (
             <button
               onClick={() => handleAdd(id)}
@@ -1828,6 +1941,7 @@ function AddForm() {
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
+              marginTop:'10px'
             }}
           >
             Cancel

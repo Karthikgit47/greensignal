@@ -20,15 +20,15 @@ function SOPDocuments() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("loction",location)
+  console.log("loction", location)
   const sopName = location.state?.SopName || "Documents";
   const SopId = location.state?.SopID || id;
   const documentName = location.state?.DocumentName || "Documents";
   const documentId = location.state?.DocumentID || id;
   const AnnexureNo = location.state?.AnnexureNo || null;
-  const LogNoteID = location.state?.LogNoteID || location.state?.DocumentIssuedID||null;
+  const LogNoteID = location.state?.LogNoteID || location.state?.DocumentIssuedID || null;
 
-  const handleEdit = (id, batchStatus, docid,mode) => {
+  const handleEdit = (id, batchStatus, docid, mode) => {
     navigate(`/dashboard/add-form/${id}/${mode}`, {
       state: {
         BatchStatus: batchStatus,
@@ -42,7 +42,7 @@ function SOPDocuments() {
     });
   };
 
-  const handlePrint = (id,batchStatus, docid) => {
+  const handlePrint = (id, batchStatus, docid) => {
     navigate(`/dashboard/add-form/${id}/print`, {
       state: {
         Batchtatus: batchStatus,
@@ -56,7 +56,7 @@ function SOPDocuments() {
     });
   };
 
-  const handleStrike = (id,batchStatus, docid) => {
+  const handleStrike = (id, batchStatus, docid) => {
     navigate(`/dashboard/add-form/${id}/strike`, {
       state: {
         BatchStatus: batchStatus,
@@ -353,14 +353,14 @@ function SOPDocuments() {
               })
             }
 
-            //          navigate(`/dashboard/list-of-log-notes/${recordId}`, {
-            //   state: {
-            //     SopName: sopName,
-            //     SopID: id,
-            //     DocumentName: documentName,
-            //     DocumentID: recordId,
-            //   },
-            // });
+          //          navigate(`/dashboard/list-of-log-notes/${recordId}`, {
+          //   state: {
+          //     SopName: sopName,
+          //     SopID: id,
+          //     DocumentName: documentName,
+          //     DocumentID: recordId,
+          //   },
+          // });
           >
             {documentName}
           </span>
@@ -370,9 +370,10 @@ function SOPDocuments() {
         <h3>
           <span
             style={{ cursor: "pointer" }}
-            // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
+          // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
           >
-            {AnnexureNo}
+            {/* {AnnexureNo} */}
+            LIST OF PRODUCTS
           </span>
         </h3>
       </div>
@@ -491,12 +492,12 @@ function SOPDocuments() {
                       onClick={
                         canEdit
                           ? () =>
-                              handleEdit(
-                                item.RecordID,
-                                item.BatchStatus,
-                                item.DocumentIssuedID,
-                                "edit"
-                              )
+                            handleEdit(
+                              item.RecordID,
+                              item.BatchStatus,
+                              item.DocumentIssuedID,
+                              "edit"
+                            )
                           : undefined
                       }
                     />
@@ -516,13 +517,13 @@ function SOPDocuments() {
                         item.IsStrike === "N"
                           // ? () => handleStrike(item.RecordID)
                           // : undefined
-                          ?() =>
-                              handleEdit(
-                                item.RecordID,
-                                item.BatchStatus,
-                                item.DocumentIssuedID,
-                                "strike"
-                              )
+                          ? () =>
+                            handleEdit(
+                              item.RecordID,
+                              item.BatchStatus,
+                              item.DocumentIssuedID,
+                              "strike"
+                            )
                           : undefined
                       }
                     />
@@ -548,12 +549,12 @@ function SOPDocuments() {
                       // }
                       // onClick={() => handlePrint(item.RecordID)}
                       onClick={() =>
-                              handleEdit(
-                                item.RecordID,
-                                item.BatchStatus,
-                                item.DocumentIssuedID,
-                                "print"
-                              )
+                        handleEdit(
+                          item.RecordID,
+                          item.BatchStatus,
+                          item.DocumentIssuedID,
+                          "print"
+                        )
                       }
                     />
                   </td>
