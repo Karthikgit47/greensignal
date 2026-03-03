@@ -278,23 +278,7 @@ function AddForm() {
   }, []);
 
 
-   const now = new Date();
-    // const formatted = now.toISOString().slice(0, 19).replace("T", " ");
-    const Strikedate = now
-      .toLocaleString("en-CA", {
-        timeZone: "Asia/Kolkata",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      })
-      .replace(",", "");
-    console.log(Strikedate);
-
-    formData.StrikedDate = Strikedate;
+   
 
   const styles = {
     wrapper: {
@@ -632,6 +616,23 @@ function AddForm() {
 
     const storedEMp = sessionStorage.getItem("EmpData");
     const parsedUser = JSON.parse(storedEMp);
+    const now = new Date();
+    // const formatted = now.toISOString().slice(0, 19).replace("T", " ");
+    const Strikedate = now
+      .toLocaleString("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      })
+      .replace(",", "");
+    console.log(Strikedate);
+
+    formData.StrikedDate = Strikedate;
 
     if (!formData.StrikeComments?.trim()) {
       Swal.fire({
@@ -661,6 +662,7 @@ function AddForm() {
             CompanyID: "76",
             StrikeComments: formData.StrikeComments,
             Strikeid: parsedUser.Data.EMP_RECID,
+            Strikedate: formData.StrikedDate
           },
           {
             headers: {
