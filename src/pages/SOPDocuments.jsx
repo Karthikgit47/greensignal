@@ -380,13 +380,13 @@ function SOPDocuments() {
       <table style={styles.table}>
         <thead>
           <tr>
-            <th style={styles.th}>#</th>
-            <th style={styles.th}>Batch No</th>
+            <th style={{...styles.th, width:'4%'}}>#</th>
+            <th style={{...styles.th, width:'11%'}}>Batch No</th>
             <th style={styles.th}>Name of the Product</th>
-            <th style={styles.th}>Manufacturing Date</th>
-            <th style={styles.th}>Expiry Date</th>
-            <th style={styles.th}>Status</th>
-            <th style={styles.th}>Action</th>
+            <th style={{...styles.th, width:'11%'}}>MFG Date</th>
+            <th style={{...styles.th, width:'11%'}}>Expiry Date</th>
+            <th style={{...styles.th, width:'10%'}}>Status</th>
+            <th style={{...styles.th, width:'12%'}}>Action</th>
           </tr>
         </thead>
 
@@ -478,7 +478,7 @@ function SOPDocuments() {
                   <td style={styles.td}>{item.ExpiryDate}</td>
                   <td style={styles.td}>{item.BatchStatus}</td>
 
-                  <td style={{ ...styles.td, textAlign: "center" }}>
+                  <td style={{ ...styles.td, }}>
                     {/* ✅ EDIT */}
                     <FaEdit
                       title="Edit"

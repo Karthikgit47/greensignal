@@ -278,7 +278,7 @@ function AddForm() {
   }, []);
 
 
-   
+
 
   const styles = {
     wrapper: {
@@ -414,7 +414,7 @@ function AddForm() {
     formData.StrikedDate = formatted;
 
     console.log("Current Time", formData.StrikedDate);
-    
+
 
     // const storedUser = sessionStorage.getItem("username");
     // console.log("Fetching and User:", storedUser);
@@ -672,18 +672,23 @@ function AddForm() {
           },
         );
         if (response.data.Status === "Y") {
-          Swal.fire("Success!", response.data.Msg, "success");
+          // Swal.fire("Success!", response.data.Msg, "Next Version of Edit Screen");
+          Swal.fire({
+            title: "Success!",
+            html: "<br><br><b>The current sheet has been striked off as the data is available in the new version of the sheet.</b>",
+            icon: "success"
+          });
           navigate(`/dashboard/add-form/${response.data.Recid}/edit`, {
-          state: {
-            BatchStatus: batchStatus,
-            DocumentIssuedID: LogNoteID,
-            SopID: SopId,
-            SopName: sopName,
-            DocumentName: documentName,
-            LogNoteID: documentId,
-            AnnexureNo: AnnexureNo,
-          },
-        });
+            state: {
+              BatchStatus: batchStatus,
+              DocumentIssuedID: LogNoteID,
+              SopID: SopId,
+              SopName: sopName,
+              DocumentName: documentName,
+              LogNoteID: documentId,
+              AnnexureNo: AnnexureNo,
+            },
+          });
           //navigate(`/dashboard/sop-documents/${formData.SOPID || id}`);
         } else {
           Swal.fire("Failed!", response.data.Msg, "error");
@@ -1460,10 +1465,10 @@ function AddForm() {
                 <th style={{ ...styles.header, width: "25%" }}>
                   Approved By (QA)
                 </th>
-                { isStriked && (
-                 <th style={{ ...styles.header, width: "25%" }}>
-                  Striked By
-                </th>)}
+                {isStriked && (
+                  <th style={{ ...styles.header, width: "25%" }}>
+                    Striked By
+                  </th>)}
               </tr>
             </thead>
 
@@ -1576,18 +1581,18 @@ function AddForm() {
                   /> */}
                 </td>
 
-              { isStriked && (
+                {isStriked && (
                   <td style={styles.cell}>
-                  <input
-                    type="text"
-                    name="StrikedName"
-                    value={formData.StrikedName || ""}
-                    onChange={handleChange}
-                    style={styles.inputtext}
-                    readOnly={mode === "print"}
-                  />
-                
-                </td>)}
+                    <input
+                      type="text"
+                      name="StrikedName"
+                      value={formData.StrikedName || ""}
+                      onChange={handleChange}
+                      style={styles.inputtext}
+                      readOnly={mode === "print"}
+                    />
+
+                  </td>)}
               </tr>
 
               {/* Sign & Date Row */}
@@ -1748,28 +1753,28 @@ function AddForm() {
                   />
                 </td> */}
 
-          { isStriked && (
-                <td style={styles.cell}>
-                  <div style={styles.signatureBox}>
-                    {selectedStrikedSign ? (
-                      <img
-                        src={selectedStrikedSign}
-                        alt="Striked Sign"
-                        style={styles.signatureImg}
-                      />
-                    ) : (
-                      <div style={styles.digitalText}>
-                        {formData.StrikedDate
-                          ? "Digitally Signed"
-                          : "Not Signed"}
-                      </div>
-                    )}
+                {isStriked && (
+                  <td style={styles.cell}>
+                    <div style={styles.signatureBox}>
+                      {selectedStrikedSign ? (
+                        <img
+                          src={selectedStrikedSign}
+                          alt="Striked Sign"
+                          style={styles.signatureImg}
+                        />
+                      ) : (
+                        <div style={styles.digitalText}>
+                          {formData.StrikedDate
+                            ? "Digitally Signed"
+                            : "Not Signed"}
+                        </div>
+                      )}
 
-                    <div style={styles.signatureDate}>
-                      {formatDateTime(formData.StrikedDate) || ""}
+                      <div style={styles.signatureDate}>
+                        {formatDateTime(formData.StrikedDate) || ""}
+                      </div>
                     </div>
-                  </div>
-                </td>)}
+                  </td>)}
               </tr>
             </tbody>
           </table>
@@ -1829,7 +1834,7 @@ function AddForm() {
                   marginBottom: "5px",
                 }}
               >
-                Strike Comment
+                Strike Comment <span style={{ color: 'red' }} >*</span>
               </label>
 
               <textarea
@@ -1848,7 +1853,7 @@ function AddForm() {
           )}
 
 
-           {isStriked && mode === "print" &&  (
+          {isStriked && mode === "print" && (
             <div
               style={{
                 borderRadius: "10px",
@@ -1924,16 +1929,16 @@ function AddForm() {
             //onClick={handleSave}
             onClick={() =>
               navigate(`/dashboard/sop-documents/${formData.DocumentIssuedID}`, {
-          state: {
-            BatchStatus: batchStatus,
-            DocumentIssuedID: formData.DocumentIssuedID,
-            SopID: SopId,
-            SopName: sopName,
-            DocumentName: documentName,
-            LogNoteID: documentId,
-            AnnexureNo: AnnexureNo,
-          },
-        })
+                state: {
+                  BatchStatus: batchStatus,
+                  DocumentIssuedID: formData.DocumentIssuedID,
+                  SopID: SopId,
+                  SopName: sopName,
+                  DocumentName: documentName,
+                  LogNoteID: documentId,
+                  AnnexureNo: AnnexureNo,
+                },
+              })
             }
             style={{
               padding: "10px 20px",
@@ -1943,7 +1948,7 @@ function AddForm() {
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
-              marginTop:'10px'
+              marginTop: '10px'
             }}
           >
             Cancel
