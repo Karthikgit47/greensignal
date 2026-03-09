@@ -45,6 +45,7 @@ function AddForm() {
   const [selectedreviewedBysign, setselectedreviewedBysgn] = useState(null);
   const [selectedapprovedBySign, setselectedapprovedBySign] = useState(null);
   const [selectedStrikedSign, setselectedStrikedSign] = useState(null);
+  const [pickedDateTime, setpickedDateTime] = useState(null);
 
   const [formData, setFormData] = useState({
     NameoftheProduct: "",
@@ -94,6 +95,7 @@ function AddForm() {
     DocumentIssuedID: "",
     StrikedName: "",
     StrikedDate: "",
+    PickedDate:""
   });
   useEffect(() => {
     const A = Number(formData.NumberofVials || 0);
@@ -188,7 +190,21 @@ function AddForm() {
 
         console.log("API Response:", response.data);
         setData(response.data?.Data || {});
-
+const now = new Date();
+    // const formatted = now.toISOString().slice(0, 19).replace("T", " ");
+    const formatted = now
+      .toLocaleString("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      })
+      .replace(",", "");
+      setpickedDateTime(formatted);
         if (response.data?.Data) {
           setselectedpreparedBy(response.data?.Data.PreparedBy);
           setselectedreviewedBy(response.data?.Data.ReviewedBy);
@@ -439,9 +455,10 @@ function AddForm() {
     let reviewedDate = formData.ReviewedDate;
     let approvedDate = formData.ApprovdDate;
     let preparedDate = formData.PreparedDate;
-
+  let pickeddatetimes=formData.PickedDate;
     if (formData.BatchStatus == "Picked") {
       preparedById = UserID;
+      pickeddatetimes=pickedDateTime;
     }
     if (formData.BatchStatus == "Prepared") {
       reviewedById = UserID;
@@ -451,6 +468,7 @@ function AddForm() {
     }
     if(action == "S"){
       if (formData.BatchStatus == "") {
+        pickeddatetimes=pickedDateTime;
         batchStatus = "Picked";
       }
       if (formData.BatchStatus == "Picked") {
@@ -582,6 +600,7 @@ function AddForm() {
           ApprovdDate: approvedDate,
           ReviewComments: formData.ReviewComments || "",
           ApprovedComments: formData.ApprovedComments || "",
+          PickedDate:pickeddatetimes
         },
       };
 
