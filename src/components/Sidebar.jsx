@@ -1,13 +1,17 @@
 import { NavLink } from "react-router-dom";
 import GreenSignalLogo from "../images/Greensignal.png";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Sidebar({ isOpen }) {
+function Sidebar({ isOpen, isMobile }) {
 
   const [openSOP, setOpenSOP] = useState(false);
 
   const storedUser = sessionStorage.getItem("EmpData");
   const parsedUser = JSON.parse(storedUser);
+
+  const navigate = useNavigate();
+  
 
   const linkStyle = ({ isActive }) => ({
     padding: "10px 15px",
@@ -29,7 +33,8 @@ function Sidebar({ isOpen }) {
           <img
             src={GreenSignalLogo}
             alt="GreenSignal"
-            style={{ width: "150px", height: "auto" }}
+            style={{ width: "150px", height: "auto",cursor:'pointer' }}
+          onClick={()=> navigate("/dashboard")}
           />
         ) : (
           "GS"

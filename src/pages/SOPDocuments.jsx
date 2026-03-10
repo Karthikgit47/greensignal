@@ -26,6 +26,8 @@ function SOPDocuments() {
   const documentName = location.state?.DocumentName || "Documents";
   const documentId = location.state?.DocumentID || id;
   const AnnexureNo = location.state?.AnnexureNo || null;
+  const Logbookno = location.state?.IssueLogBookNo || null;
+  const sopCode = location.state?.Code || null;
   const LogNoteID = location.state?.LogNoteID || location.state?.DocumentIssuedID || null;
 
   const handleEdit = (id, batchStatus, docid, mode) => {
@@ -38,6 +40,8 @@ function SOPDocuments() {
         DocumentName: documentName,
         DocumentID: documentId,
         AnnexureNo: AnnexureNo,
+        Code: sopCode,
+        IssueLogBookNo: Logbookno,
       },
     });
   };
@@ -315,7 +319,7 @@ function SOPDocuments() {
           marginBottom: "10px",
         }}
       >
-        <h3>
+        {/* <h3>
           <span
             style={{ cursor: "pointer" }}
             onClick={() => navigate(`/dashboard/list-of-sops`)}
@@ -323,17 +327,21 @@ function SOPDocuments() {
             List of SOPs
           </span>
         </h3>
-        <span>/</span>
+        <span>/</span> */}
         <h3>
           <span
             style={{ cursor: "pointer" }}
             onClick={() =>
               navigate(`/dashboard/list-of-documents/${SopId}`, {
-                state: { Description: sopName },
+                state: {
+                  Description: sopName,
+                  Code: sopCode
+                },
               })
             }
           >
-            {sopName}
+            {/* {sopName} */}
+            {sopCode}(Documents)
           </span>
         </h3>
 
@@ -349,6 +357,7 @@ function SOPDocuments() {
                   SopID: SopId,
                   DocumentName: documentName,
                   DocumentID: documentId,
+                  Code: sopCode
                 },
               })
             }
@@ -362,7 +371,8 @@ function SOPDocuments() {
           //   },
           // });
           >
-            {documentName}
+            {documentName}(Annx)
+            {/* Annuexure */}
           </span>
         </h3>
         <span>/</span>
@@ -373,20 +383,21 @@ function SOPDocuments() {
           // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
           >
             {/* {AnnexureNo} */}
-            LIST OF PRODUCTS
+            LOG NOTE# {Logbookno}(PRODUCTS)
+            {/* LIST OF PRODUCTS */}
           </span>
         </h3>
       </div>
       <table style={styles.table}>
         <thead>
           <tr>
-            <th style={{...styles.th, width:'4%'}}>#</th>
-            <th style={{...styles.th, width:'11%'}}>Batch No</th>
+            <th style={{ ...styles.th, width: '4%' }}>#</th>
+            <th style={{ ...styles.th, width: '11%' }}>Batch #</th>
             <th style={styles.th}>Name of the Product</th>
-            <th style={{...styles.th, width:'11%'}}>MFG Date</th>
-            <th style={{...styles.th, width:'11%'}}>Expiry Date</th>
-            <th style={{...styles.th, width:'10%'}}>Status</th>
-            <th style={{...styles.th, width:'12%'}}>Action</th>
+            <th style={{ ...styles.th, width: '11%' }}>MFG Date</th>
+            <th style={{ ...styles.th, width: '11%' }}>Expiry Date</th>
+            <th style={{ ...styles.th, width: '10%' }}>Status</th>
+            <th style={{ ...styles.th, width: '12%' }}>Action</th>
           </tr>
         </thead>
 
@@ -463,6 +474,7 @@ function SOPDocuments() {
           ) : currentRows.length > 0 ? (
             currentRows.map((item, index) => {
               const canEdit =
+                (PrepareBy === "Y" && item.BatchStatus === "") ||
                 (PrepareBy === "Y" && item.BatchStatus === "Picked") ||
                 (ReviewBY === "Y" && item.BatchStatus === "Prepared") ||
                 (ApprovedBy === "Y" && item.BatchStatus === "Reviewed");
@@ -480,6 +492,7 @@ function SOPDocuments() {
 
                   <td style={{ ...styles.td, }}>
                     {/* ✅ EDIT */}
+
                     <FaEdit
                       title="Edit"
                       style={{
@@ -502,31 +515,32 @@ function SOPDocuments() {
                       }
                     />
 
-                    <FaTimesCircle
-                      title={
-                        item.IsStrike === "Y" ? "Already Striked" : "Strike"
-                      }
-                      style={{
-                        cursor:
-                          item.IsStrike === "N" ? "pointer" : "not-allowed",
-                        color: item.IsStrike === "N" ? "#7ca3f7" : "#ccc",
-                        fontSize: "18px",
-                        marginRight: "12px",
-                      }}
-                      onClick={
-                        item.IsStrike === "N"
-                          // ? () => handleStrike(item.RecordID)
-                          // : undefined
-                          ? () =>
-                            handleEdit(
-                              item.RecordID,
-                              item.BatchStatus,
-                              item.DocumentIssuedID,
-                              "strike"
-                            )
-                          : undefined
-                      }
-                    />
+                    {(item.BatchStatus === "Prepared" ||
+                      item.BatchStatus === "Reviewed" || item.BatchStatus === "Approved" || item.BatchStatus === "Striked") && (
+                        <FaTimesCircle
+                          title={
+                            item.IsStrike === "Y" ? "Already Striked" : "Strike"
+                          }
+                          style={{
+                            cursor:
+                            item.IsStrike === "N" ? "pointer" : "not-allowed",
+                            color: item.IsStrike === "N" ? "#7ca3f7" : "#ccc",
+                            fontSize: "18px",
+                            marginRight: "12px",
+                          }}
+                          onClick={
+                            item.IsStrike === "N"
+                              ? () =>
+                                handleEdit(
+                                  item.RecordID,
+                                  item.BatchStatus,
+                                  item.DocumentIssuedID,
+                                  "strike"
+                                )
+                              : undefined
+                          }
+                        />
+                      )}
 
                     {/* ✅ PRINT */}
                     <FaPrint

@@ -16,9 +16,12 @@ function ListOfSOPs() {
   //   });
   // };
 
-   const handleView = (id, sopName) => {
+   const handleView = (id, sopName, sopcode) => {
     navigate(`/dashboard/list-of-documents/${id}`,{
-      state: { Description: sopName },
+      state: {
+         Description: sopName ,
+         Code : sopcode,
+      },
     });
   };
 
@@ -136,7 +139,7 @@ function ListOfSOPs() {
                     }}
                     onClick={() => {
                     
-                      handleView(item.RecordID, item.Description);
+                      handleView(item.RecordID, item.Description, item.Code);
                       // if (item.IsEnable === "Y") {
                       //   handleView(item.RecordID, item.Description);
                       // }

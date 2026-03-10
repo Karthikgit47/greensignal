@@ -22,6 +22,7 @@ function ListOfDocuments() {
         SopID: id,
         DocumentName: documentName,
         DocumentID: recordId,
+        Code: sopCode
       },
     });
   };
@@ -37,6 +38,7 @@ function ListOfDocuments() {
   };
 
   const sopName = location.state?.Description || "Documents";
+  const sopCode = location.state?.Code || "Documents";
 
   useEffect(() => {
     const fetchNewScreenData = async () => {
@@ -96,24 +98,25 @@ function ListOfDocuments() {
         }}
       >
         <h3 style={{ fontWeight: "500" }}>
-          <span
+          {/* <span
             style={{
               cursor: "pointer",
             }}
             onClick={() => navigate("/dashboard/list-of-sops")}
           >
             List of SOPs
-          </span>
+          </span> */}
 
-          <span style={{ margin: "0 8px", color: "#888" }}>/</span>
+          {/* <span style={{ margin: "0 8px", color: "#888" }}>/</span> */}
 
-          <span style={{ fontWeight: "600", color: "#000" }}>{sopName}</span>
+          {/* <span style={{ fontWeight: "600", color: "#000" }}>{sopName}</span> */}
+          <span style={{ fontWeight: "600", color: "#000" }}>{sopCode} (Documents)</span>
         </h3>
       </div>
       <table style={styles.table}>
         <thead>
           <tr>
-            <th style={styles.th}>#</th>
+            <th style={styles.th}>SL#</th>
             <th style={styles.th}>Type Of Document</th>
             <th style={styles.th}>Document Name</th>
             <th style={styles.th}>Action </th>

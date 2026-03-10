@@ -16,7 +16,7 @@ function ListOfLogNotes() {
 
   const location = useLocation();
 
-  const handleSOPs = (recordId, annexureNo) => {
+  const handleSOPs = (recordId, annexureNo, logbookno) => {
     // navigate(`/dashboard/sop-documents/${recordId}`);
 
     navigate(`/dashboard/sop-documents/${recordId}`, {
@@ -27,6 +27,8 @@ function ListOfLogNotes() {
         DocumentID: documentId,
         AnnexureNo: annexureNo,
         LogNoteID:id,
+        IssueLogBookNo:logbookno,
+        Code:sopCode
       },
     });
   };
@@ -35,6 +37,7 @@ function ListOfLogNotes() {
   const SopId = location.state?.SopID || id;
   const documentName = location.state?.DocumentName || "Documents";
   const documentId = location.state?.DocumentID || id;
+  const sopCode = location.state?.Code || id;
 
   useEffect(() => {
     const fetchNewScreenData = async () => {
@@ -96,7 +99,7 @@ function ListOfLogNotes() {
           marginBottom: "10px",
         }}
       >
-        <h3>
+        {/* <h3>
           <span
             style={{ cursor: "pointer" }}
             onClick={() => navigate(`/dashboard/list-of-sops`)}
@@ -104,17 +107,20 @@ function ListOfLogNotes() {
             List of SOPs
           </span>
         </h3>
-        <span>/</span>
+        <span>/</span> */}
         <h3>
           <span
             style={{ cursor: "pointer" }}
             onClick={() =>
               navigate(`/dashboard/list-of-documents/${SopId}`, {
-                state: { Description: sopName },
+                state: { Description: sopName ,
+                  Code : sopCode
+                },
               })
             }
-          >
-            {sopName}
+          > 
+            {/* {sopName} */}
+            {sopCode}(Documents) 
           </span>
         </h3>
 
@@ -125,7 +131,8 @@ function ListOfLogNotes() {
             style={{ cursor: "pointer" }}
             // onClick={() => navigate(`/dashboard/list-of-log-notes/${id}`)}
           >
-            {documentName}
+            {documentName}(Annx)
+             {/* Annuexure */}
           </span>
         </h3>
       </div>
@@ -133,7 +140,7 @@ function ListOfLogNotes() {
         <thead>
           <tr>
             <th style={styles.th}>#</th>
-            <th style={styles.th}>Annexure No</th>
+            <th style={styles.th}>Annexure#</th>
             <th style={styles.th}>Request Date</th>
             <th style={styles.th}>No Of Copy Issue </th>
             <th style={styles.th}>Issue LogBook# </th>
@@ -152,12 +159,12 @@ function ListOfLogNotes() {
             data.map((item, index) => (
               <tr key={item.RecordID || index}>
                 <td style={styles.td}>{item.SLNO}</td>
-                <td style={{ ...styles.td, width: "120px" }}>
+                <td style={{ ...styles.td, width: "120px", textAlign:"right" }}>
                   {item.AnnexureNo}
                 </td>
                 <td style={styles.td}>{item.RequestDate}</td>
-                <td style={styles.td}>{item.NoOfCopyIssue}</td>
-                <td style={styles.td}>{item.IssueLogBookNo}</td>
+                <td style={{...styles.td, textAlign:"right"}}>{item.NoOfCopyIssue}</td>
+                <td style={{...styles.td, textAlign:"right"}}>{item.IssueLogBookNo}</td>
                 <td style={{ ...styles.td, textAlign: "center" }}>
                   <FaArrowRight
                     style={{
@@ -167,7 +174,7 @@ function ListOfLogNotes() {
                       opacity: 1,
                     }}
                     onClick={() => {
-                      handleSOPs(item.RecordID, item.AnnexureNo);
+                      handleSOPs(item.RecordID, item.AnnexureNo,item.IssueLogBookNo);
                     }}
                   />
                 </td>

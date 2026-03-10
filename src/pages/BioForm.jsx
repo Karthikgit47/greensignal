@@ -24,6 +24,9 @@ function AddForm() {
   const documentId = location.state?.DocumentID || id;
   const AnnexureNo = location.state?.AnnexureNo || null;
   const LogNoteID = location.state?.LogNoteID || null;
+  const sopCode = location.state?.Code || null;
+  const Logbookno = location.state?.IssueLogBookNo || null;
+
   console.log("BatchStatus received:", batchStatus);
 
   const docID = location.state?.DocumentIssuedID;
@@ -446,6 +449,14 @@ function AddForm() {
     if (formData.BatchStatus == "Reviewed") {
       approvedById = UserID;
     }
+    if(action == "S"){
+      if (formData.BatchStatus == "") {
+        batchStatus = "Picked";
+      }
+      if (formData.BatchStatus == "Picked") {
+        batchStatus = "Prepared";
+      }
+    }
     if (action == "P") {
       if (formData.BatchStatus == "Picked") {
         preparedById = UserID;
@@ -602,6 +613,8 @@ function AddForm() {
             DocumentName: documentName,
             LogNoteID: documentId,
             AnnexureNo: AnnexureNo,
+            Code: sopCode,
+            IssueLogBookNo:Logbookno
           },
         });
       }, 1500);
@@ -675,7 +688,7 @@ function AddForm() {
           // Swal.fire("Success!", response.data.Msg, "Next Version of Edit Screen");
           Swal.fire({
             title: "Success!",
-            html: "<br><br><b>The current sheet has been striked off as the data is available in the new version of the sheet.</b>",
+            html: "<br><br><b>The current sheet has been striked off, this data is available in the new version of the sheet.</b>",
             icon: "success"
           });
           navigate(`/dashboard/add-form/${response.data.Recid}/edit`, {
@@ -1921,7 +1934,7 @@ function AddForm() {
                 marginRight: "12px",
               }}
             >
-              {formData.BatchStatus == "Picked" ? "Save" : "Query"}
+              {formData.BatchStatus == "" || formData.BatchStatus == "Picked" ? "Save" : "Save"}
             </button>
           )}
 
@@ -1937,6 +1950,8 @@ function AddForm() {
                   DocumentName: documentName,
                   LogNoteID: documentId,
                   AnnexureNo: AnnexureNo,
+                  Code: sopCode,
+                  IssueLogBookNo: Logbookno
                 },
               })
             }
